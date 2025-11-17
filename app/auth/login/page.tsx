@@ -1,0 +1,104 @@
+"use client"
+
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { useToast } from "@/components/ui/use-toast"
+import { useAuth } from "@/contexts/auth-context"
+
+export default function LoginPage() {
+  const router = useRouter()
+  const { toast } = useToast()
+  const { login } = useAuth()
+  const [loading, setLoading] = useState(false)
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  })
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || "Login failed")
+      }
+
+      // Store token and user info
+      login(data.token, data.user)
+
+      toast({
+        title: "Success",
+        description: "Logged in successfully",
+      })
+      router.push("/dashboard")
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Invalid email or password",
+        variant: "destructive",
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <Card className="w-full max-w-md">
+        <CardHeader>
+          <CardTitle>Login</CardTitle>
+          <CardDescription>Enter your credentials to access your account</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="your@email.com"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                required
+              />
+            </div>
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? "Logging in..." : "Login"}
+            </Button>
+          </form>
+          <div className="mt-4 text-center text-sm">
+            <span className="text-muted-foreground">Don't have an account? </span>
+            <Link href="/auth/register" className="text-primary hover:underline">
+              Register
+            </Link>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
+
