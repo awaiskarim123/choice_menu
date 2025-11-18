@@ -65,14 +65,6 @@ cp .env.example .env
 
 Edit `.env` and add your configuration:
 ```env
-DATABASE_URL="postgresql://user:password@localhost:5432/choice_menu?schema=public"
-JWT_SECRET="your-super-secret-jwt-key-change-this-in-production-min-32-chars"
-JWT_EXPIRES_IN="7d"
-SMTP_HOST="smtp.gmail.com"
-SMTP_PORT=587
-SMTP_USER="your-email@gmail.com"
-SMTP_PASSWORD="your-app-password"
-SMTP_FROM="Choice Menu <noreply@choicemenu.com>"
 ```
 
 4. Set up the database:
