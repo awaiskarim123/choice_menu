@@ -1,5 +1,7 @@
 import { z } from "zod"
 
+export type Role = "ADMIN" | "CUSTOMER"
+
 export const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
@@ -11,7 +13,7 @@ export const registerSchema = z.object({
   phone: z.string().min(10, "Phone number must be at least 10 digits"),
   password: z.string().min(6, "Password must be at least 6 characters"),
   cnic: z.string().optional(),
-  role: z.enum(["ADMIN", "CUSTOMER"]).default("CUSTOMER"),
+  role: z.literal("CUSTOMER").default("CUSTOMER"),
 })
 
 export const eventBookingSchema = z.object({

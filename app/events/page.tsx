@@ -9,6 +9,7 @@ import { Sidebar } from "@/components/sidebar"
 import { formatDate, formatCurrency } from "@/lib/utils"
 import { useToast } from "@/components/ui/use-toast"
 import { useAuth } from "@/contexts/auth-context"
+import { fetchWithAuth } from "@/lib/api-client"
 import { Calendar, MapPin, Users, DollarSign, Clock, CheckCircle2, XCircle, Clock3, MoreVertical } from "lucide-react"
 
 type Event = {
@@ -84,11 +85,7 @@ export default function EventsPage() {
       const url = new URL("/api/events", window.location.origin)
       if (statusFilter) url.searchParams.set("status", statusFilter)
 
-      const response = await fetch(url.toString(), {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+      const response = await fetchWithAuth(url.toString())
 
       if (!response.ok) {
         if (response.status === 401) {
@@ -189,11 +186,10 @@ export default function EventsPage() {
     }
 
     try {
-      const response = await fetch(`/api/events/${eventId}`, {
+      const response = await fetchWithAuth(`/api/events/${eventId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ status }),
       })
@@ -201,6 +197,10 @@ export default function EventsPage() {
       const result = await response.json()
 
       if (!response.ok) {
+        if (response.status === 401) {
+          router.push("/auth/login")
+          return
+        }
         throw new Error(result.error || "Failed to update status")
       }
 

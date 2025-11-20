@@ -66,6 +66,9 @@ export function Sidebar({ className }: SidebarProps) {
   ]
 
   const isActive = (href: string) => {
+    if (href === "/") {
+      return pathname === "/"
+    }
     if (href === "/dashboard") {
       return pathname === "/dashboard"
     }
