@@ -2,10 +2,51 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Logo } from "@/components/logo"
+import { StructuredData } from "@/components/structured-data"
+import type { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Home",
+  description: "Choice Menu - Your trusted event management and catering partner. Professional tent setup, catering services, and comprehensive event planning for weddings, corporate events, and special occasions in Pakistan.",
+  keywords: ["event management", "catering services", "tent service", "wedding planning", "corporate events", "Pakistan"],
+  openGraph: {
+    title: "Choice Menu - Event Management & Catering Services",
+    description: "Professional event management and catering services. Book your perfect event with tent setup, catering, and comprehensive event planning services.",
+    type: "website",
+  },
+}
 
 export default function Home() {
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "Choice Menu",
+    url: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+    description: "Professional event management and catering services",
+    contactPoint: {
+      "@type": "ContactPoint",
+      contactType: "Customer Service",
+    },
+  }
+
+  const localBusinessSchema = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    name: "Choice Menu",
+    description: "Professional event management and catering services",
+    url: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+    priceRange: "$$",
+    areaServed: {
+      "@type": "Country",
+      name: "Pakistan",
+    },
+  }
+
   return (
-    <div className="min-h-screen">
+    <>
+      <StructuredData data={organizationSchema} />
+      <StructuredData data={localBusinessSchema} />
+      <div className="min-h-screen">
       {/* Navigation */}
       <nav className="border-b">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
@@ -108,7 +149,8 @@ export default function Home() {
           <p>&copy; 2024 Choice Menu. All rights reserved.</p>
         </div>
       </footer>
-    </div>
+      </div>
+    </>
   )
 }
 
