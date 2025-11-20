@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
         phone: validatedData.phone,
         cnic: validatedData.cnic || null,
         password: hashedPassword,
-        role: validatedData.role || "CUSTOMER",
+        role: validatedData.role,
       },
       select: {
         id: true,

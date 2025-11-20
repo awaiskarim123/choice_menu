@@ -7,6 +7,15 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
+    // Check authentication
+    const authResult = await verifyAuth(request)
+    if (!authResult) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      )
+    }
+
     const event = await prisma.event.findUnique({
       where: { id: params.id },
       include: {
@@ -35,6 +44,11 @@ export async function GET(
 
     if (!event) {
       return NextResponse.json({ error: "Event not found" }, { status: 404 })
+    }
+
+    // RBAC: Non-admin users can only view their own events
+    if (authResult.role !== "ADMIN" && event.customerId !== authResult.userId) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 
     return NextResponse.json({ event })
@@ -124,12 +138,26 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
+    // Check authentication
+    const authResult = await verifyAuth(request)
+    if (!authResult) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      )
+    }
+
     const event = await prisma.event.findUnique({
       where: { id: params.id },
     })
 
     if (!event) {
       return NextResponse.json({ error: "Event not found" }, { status: 404 })
+    }
+
+    // RBAC: Only ADMIN or event owner can delete
+    if (authResult.role !== "ADMIN" && event.customerId !== authResult.userId) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 
     await prisma.event.delete({
