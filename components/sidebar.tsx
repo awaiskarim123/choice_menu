@@ -80,7 +80,7 @@ export function Sidebar({ className }: SidebarProps) {
           variant="outline"
           size="icon"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="bg-background"
+          className="bg-card border-2 shadow-lg hover:bg-accent"
         >
           {isMobileMenuOpen ? (
             <X className="h-5 w-5" />
@@ -93,35 +93,36 @@ export function Sidebar({ className }: SidebarProps) {
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed top-0 left-0 z-40 h-screen w-64 border-r bg-background transition-transform lg:translate-x-0",
+          "fixed top-0 left-0 z-40 h-screen w-64 border-r bg-card/50 backdrop-blur-sm transition-transform lg:translate-x-0 shadow-lg",
           isMobileMenuOpen ? "translate-x-0" : "-translate-x-full",
           className
         )}
       >
         <div className="flex h-full flex-col">
           {/* Logo */}
-          <div className="flex h-16 items-center border-b px-6">
+          <div className="flex h-20 items-center border-b px-6 bg-card/50">
             <Logo href="/" size="sm" showText={true} />
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 space-y-1 px-3 py-4">
+          <nav className="flex-1 space-y-2 px-4 py-6 overflow-y-auto">
             {navigation.map((item) => {
               if (!item.show) return null
               const Icon = item.icon
+              const active = isActive(item.href)
               return (
                 <Link
                   key={item.name}
                   href={item.href}
                   onClick={() => setIsMobileMenuOpen(false)}
                   className={cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                    isActive(item.href)
-                      ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                    "flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200",
+                    active
+                      ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
+                      : "text-muted-foreground hover:bg-accent hover:text-accent-foreground hover:translate-x-1"
                   )}
                 >
-                  <Icon className="h-5 w-5" />
+                  <Icon className={cn("h-5 w-5", active && "scale-110")} />
                   {item.name}
                 </Link>
               )
@@ -129,18 +130,16 @@ export function Sidebar({ className }: SidebarProps) {
           </nav>
 
           {/* User info and actions */}
-          <div className="border-t p-4">
-            <div className="mb-4 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                  <Users className="h-4 w-4" />
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-sm font-medium">{user?.name}</span>
-                  <span className="text-xs text-muted-foreground">
-                    {isAdmin ? "Admin" : "User"}
-                  </span>
-                </div>
+          <div className="border-t bg-card/30 p-4 space-y-3">
+            <div className="flex items-center gap-3 px-2">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary/80 text-primary-foreground shadow-md">
+                <Users className="h-5 w-5" />
+              </div>
+              <div className="flex flex-col flex-1 min-w-0">
+                <span className="text-sm font-semibold truncate">{user?.name}</span>
+                <span className="text-xs text-muted-foreground">
+                  {isAdmin ? "Administrator" : "Customer"}
+                </span>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -149,7 +148,7 @@ export function Sidebar({ className }: SidebarProps) {
                 variant="outline"
                 size="sm"
                 onClick={logout}
-                className="flex-1"
+                className="flex-1 border-destructive/20 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/40"
               >
                 <LogOut className="mr-2 h-4 w-4" />
                 Logout
@@ -162,7 +161,7 @@ export function Sidebar({ className }: SidebarProps) {
       {/* Overlay for mobile */}
       {isMobileMenuOpen && (
         <div
-          className="fixed inset-0 z-30 bg-background/80 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-30 bg-black/50 backdrop-blur-sm lg:hidden transition-opacity"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}

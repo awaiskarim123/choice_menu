@@ -122,36 +122,36 @@ export default function EventsPage() {
     switch (status) {
       case "CONFIRMED":
         return {
-          color: "text-green-600",
-          bgColor: "bg-green-50",
+          color: "text-green-600 dark:text-green-400",
+          bgColor: "bg-green-500/10 border border-green-500/20",
           icon: CheckCircle2,
           label: "Confirmed"
         }
       case "PENDING":
         return {
-          color: "text-orange-600",
-          bgColor: "bg-orange-50",
+          color: "text-yellow-600 dark:text-yellow-400",
+          bgColor: "bg-yellow-500/10 border border-yellow-500/20",
           icon: Clock3,
           label: "Pending"
         }
       case "REJECTED":
         return {
-          color: "text-red-600",
-          bgColor: "bg-red-50",
+          color: "text-red-600 dark:text-red-400",
+          bgColor: "bg-red-500/10 border border-red-500/20",
           icon: XCircle,
           label: "Rejected"
         }
       case "COMPLETED":
         return {
-          color: "text-blue-600",
-          bgColor: "bg-blue-50",
+          color: "text-blue-600 dark:text-blue-400",
+          bgColor: "bg-blue-500/10 border border-blue-500/20",
           icon: CheckCircle2,
           label: "Completed"
         }
       case "CANCELLED":
         return {
-          color: "text-gray-600",
-          bgColor: "bg-gray-50",
+          color: "text-gray-600 dark:text-gray-400",
+          bgColor: "bg-gray-500/10 border border-gray-500/20",
           icon: XCircle,
           label: "Cancelled"
         }
@@ -246,32 +246,39 @@ export default function EventsPage() {
   return (
     <div className="min-h-screen bg-background">
       <Sidebar />
-      <div className="lg:pl-64">
+      <div className="lg:pl-64 pt-16 lg:pt-0">
         <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold">Events List</h1>
+        <div className="flex justify-between items-center mb-8">
+          <div>
+            <h1 className="text-4xl font-bold mb-2">Events List</h1>
+            <p className="text-muted-foreground">Manage and track all your events</p>
+          </div>
           <div className="flex gap-2">
             <Button
               variant={statusFilter === "" ? "default" : "outline"}
               onClick={() => setStatusFilter("")}
+              className="rounded-lg"
             >
               All
             </Button>
             <Button
               variant={statusFilter === "PENDING" ? "default" : "outline"}
               onClick={() => setStatusFilter("PENDING")}
+              className="rounded-lg"
             >
               Pending
             </Button>
             <Button
               variant={statusFilter === "CONFIRMED" ? "default" : "outline"}
               onClick={() => setStatusFilter("CONFIRMED")}
+              className="rounded-lg"
             >
               Confirmed
             </Button>
             <Button
               variant={statusFilter === "COMPLETED" ? "default" : "outline"}
               onClick={() => setStatusFilter("COMPLETED")}
+              className="rounded-lg"
             >
               Completed
             </Button>
@@ -279,7 +286,7 @@ export default function EventsPage() {
         </div>
 
         {events.length === 0 ? (
-          <Card>
+          <Card className="border-2">
             <CardContent className="py-12 text-center">
               <p className="text-muted-foreground text-lg">No events found</p>
               <Link href="/book-event" className="mt-4 inline-block">
@@ -288,18 +295,18 @@ export default function EventsPage() {
             </CardContent>
           </Card>
         ) : (
-          <Card>
+          <Card className="border-2 shadow-sm">
             <CardContent className="p-0">
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b bg-gray-50">
-                      <th className="text-left p-4 font-semibold text-sm">Event Name</th>
-                      <th className="text-left p-4 font-semibold text-sm">Start Date</th>
-                      <th className="text-left p-4 font-semibold text-sm">End Date</th>
-                      <th className="text-left p-4 font-semibold text-sm">Duration</th>
-                      <th className="text-left p-4 font-semibold text-sm">Status</th>
-                      <th className="text-left p-4 font-semibold text-sm">Options</th>
+                    <tr className="border-b bg-muted/50">
+                      <th className="text-left p-4 font-semibold text-sm uppercase tracking-wide text-muted-foreground">Event Name</th>
+                      <th className="text-left p-4 font-semibold text-sm uppercase tracking-wide text-muted-foreground">Start Date</th>
+                      <th className="text-left p-4 font-semibold text-sm uppercase tracking-wide text-muted-foreground">End Date</th>
+                      <th className="text-left p-4 font-semibold text-sm uppercase tracking-wide text-muted-foreground">Duration</th>
+                      <th className="text-left p-4 font-semibold text-sm uppercase tracking-wide text-muted-foreground">Status</th>
+                      <th className="text-left p-4 font-semibold text-sm uppercase tracking-wide text-muted-foreground">Options</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -309,7 +316,7 @@ export default function EventsPage() {
                       const duration = calculateDuration(event.eventStartDate, event.eventEndDate)
                       
                       return (
-                        <tr key={event.id} className="border-b hover:bg-gray-50 transition-colors">
+                        <tr key={event.id} className="border-b hover:bg-muted/30 transition-colors">
                           <td className="p-4">
                             <div>
                               <div className="font-medium">{event.eventName}</div>

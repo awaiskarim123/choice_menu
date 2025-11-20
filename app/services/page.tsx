@@ -35,8 +35,8 @@ export default function ServicesPage() {
   }
 
   return (
-    <div className="min-h-screen">
-      <nav className="border-b">
+    <div className="min-h-screen bg-background">
+      <nav className="border-b bg-card/50 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <Logo href="/" size="md" showText={true} />
           <div className="flex gap-4">
@@ -57,31 +57,38 @@ export default function ServicesPage() {
       </nav>
 
       <div className="container mx-auto px-4 py-16">
-        <h1 className="text-4xl font-bold mb-4 text-center">Our Services</h1>
-        <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
-          We offer a comprehensive range of event management and catering services to make your
-          event perfect
-        </p>
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold mb-4">Our Services</h1>
+          <p className="text-center text-muted-foreground max-w-2xl mx-auto">
+            We offer a comprehensive range of event management and catering services to make your
+            event perfect
+          </p>
+        </div>
 
         {loading ? (
-          <div className="text-center">Loading services...</div>
-        ) : services.length === 0 ? (
-          <div className="text-center text-muted-foreground">
-            No services available at the moment.
+          <div className="text-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Loading services...</p>
           </div>
+        ) : services.length === 0 ? (
+          <Card className="border-2 max-w-md mx-auto">
+            <CardContent className="py-12 text-center">
+              <p className="text-muted-foreground text-lg">No services available at the moment.</p>
+            </CardContent>
+          </Card>
         ) : (
           <div className="grid md:grid-cols-3 gap-6">
             {services.map((service) => (
-              <Card key={service.id}>
+              <Card key={service.id} className="border-2 hover:border-primary/50 transition-all shadow-sm hover:shadow-md">
                 <CardHeader>
-                  <CardTitle>{service.name}</CardTitle>
-                  <CardDescription>{service.description || "Premium service"}</CardDescription>
+                  <CardTitle className="text-xl">{service.name}</CardTitle>
+                  <CardDescription className="text-base">{service.description || "Premium service"}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="flex justify-between items-center">
-                    <span className="text-2xl font-bold">{formatCurrency(service.price)}</span>
+                    <span className="text-2xl font-bold text-primary">{formatCurrency(service.price)}</span>
                     <Link href="/book-event">
-                      <Button>Book Now</Button>
+                      <Button className="rounded-lg">Book Now</Button>
                     </Link>
                   </div>
                 </CardContent>
@@ -92,12 +99,12 @@ export default function ServicesPage() {
 
         <div className="mt-12 text-center">
           <Link href="/book-event">
-            <Button size="lg">Book Your Event</Button>
+            <Button size="lg" className="rounded-lg">Book Your Event</Button>
           </Link>
         </div>
       </div>
 
-      <footer className="border-t py-8 mt-16">
+      <footer className="border-t bg-card/50 backdrop-blur-sm py-8 mt-16">
         <div className="container mx-auto px-4 text-center text-muted-foreground">
           <p>&copy; 2024 Choice Menu. All rights reserved.</p>
         </div>

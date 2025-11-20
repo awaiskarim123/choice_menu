@@ -127,55 +127,63 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen bg-background">
       <Sidebar />
-      <div className="lg:pl-64">
+      <div className="lg:pl-64 pt-16 lg:pt-0">
         <div className="container mx-auto px-4 py-8">
         {/* Stats Cards */}
         {stats && (
           <div className="grid md:grid-cols-4 gap-6 mb-8">
-            <Card>
+            <Card className="border-2 hover:border-primary/50 transition-colors shadow-sm hover:shadow-md">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Bookings</CardTitle>
-                <Calendar className="h-4 w-4 text-muted-foreground" />
+                <CardTitle className="text-sm font-medium text-muted-foreground">Total Bookings</CardTitle>
+                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <Calendar className="h-5 w-5 text-primary" />
+                </div>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stats.totalBookings}</div>
-                <p className="text-xs text-muted-foreground">
+                <div className="text-3xl font-bold">{stats.totalBookings}</div>
+                <p className="text-xs text-muted-foreground mt-1">
                   {stats.recentBookings} new this week
                 </p>
               </CardContent>
             </Card>
-            <Card>
+            <Card className="border-2 hover:border-primary/50 transition-colors shadow-sm hover:shadow-md">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-                <DollarSign className="h-4 w-4 text-muted-foreground" />
+                <CardTitle className="text-sm font-medium text-muted-foreground">Total Revenue</CardTitle>
+                <div className="h-10 w-10 rounded-lg bg-green-500/10 flex items-center justify-center">
+                  <DollarSign className="h-5 w-5 text-green-600 dark:text-green-400" />
+                </div>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{formatCurrency(stats.totalRevenue)}</div>
+                <div className="text-3xl font-bold">{formatCurrency(stats.totalRevenue)}</div>
               </CardContent>
             </Card>
-            <Card>
+            <Card className="border-2 hover:border-primary/50 transition-colors shadow-sm hover:shadow-md">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Upcoming Events</CardTitle>
-                <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                <CardTitle className="text-sm font-medium text-muted-foreground">Upcoming Events</CardTitle>
+                <div className="h-10 w-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                  <TrendingUp className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                </div>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stats.upcomingEvents}</div>
+                <div className="text-3xl font-bold">{stats.upcomingEvents}</div>
               </CardContent>
             </Card>
-            <Card>
+            <Card className="border-2 hover:border-primary/50 transition-colors shadow-sm hover:shadow-md">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Customers</CardTitle>
-                <Users className="h-4 w-4 text-muted-foreground" />
+                <CardTitle className="text-sm font-medium text-muted-foreground">Total Customers</CardTitle>
+                <div className="h-10 w-10 rounded-lg bg-purple-500/10 flex items-center justify-center">
+                  <Users className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                </div>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stats.totalCustomers}</div>
+                <div className="text-3xl font-bold">{stats.totalCustomers}</div>
               </CardContent>
             </Card>
           </div>
         )}
 
         {/* Filters */}
-        <Card className="mb-8">
+        <Card className="mb-8 border-2">
           <CardContent className="pt-6">
             <div className="flex gap-4">
               <div className="flex-1 relative">
@@ -184,13 +192,13 @@ export default function AdminDashboard() {
                   placeholder="Search events or customers..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 border-2 rounded-lg"
                 />
               </div>
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-4 py-2 border rounded-md"
+                className="px-4 py-2 border-2 rounded-lg bg-background hover:border-primary/50 transition-colors cursor-pointer"
               >
                 <option value="">All Status</option>
                 <option value="PENDING">Pending</option>
@@ -215,12 +223,12 @@ export default function AdminDashboard() {
             </Card>
           ) : (
             filteredEvents.map((event) => (
-              <Card key={event.id}>
+              <Card key={event.id} className="border-2 hover:border-primary/30 transition-all shadow-sm hover:shadow-md">
                 <CardHeader>
                   <div className="flex justify-between items-start">
-                    <div>
-                      <CardTitle>{event.eventName}</CardTitle>
-                      <CardDescription>
+                    <div className="flex-1">
+                      <CardTitle className="text-xl mb-1">{event.eventName}</CardTitle>
+                      <CardDescription className="text-base">
                         {event.eventType} • {formatDate(event.eventDate)} • Customer:{" "}
                         {event.customer.name} ({event.customer.phone})
                       </CardDescription>
@@ -228,7 +236,7 @@ export default function AdminDashboard() {
                     <select
                       value={event.status}
                       onChange={(e) => updateEventStatus(event.id, e.target.value)}
-                      className="px-3 py-1 border rounded-md text-sm"
+                      className="px-3 py-2 border-2 rounded-lg text-sm bg-background hover:border-primary/50 transition-colors cursor-pointer"
                     >
                       <option value="PENDING">Pending</option>
                       <option value="CONFIRMED">Confirmed</option>
@@ -240,15 +248,15 @@ export default function AdminDashboard() {
                 <CardContent>
                   <div className="flex justify-between items-center">
                     <div>
-                      <p className="text-sm text-muted-foreground">Total Amount</p>
-                      <p className="text-lg font-semibold">
+                      <p className="text-sm text-muted-foreground mb-1">Total Amount</p>
+                      <p className="text-2xl font-bold">
                         {formatCurrency(
                           event.payments.reduce((sum, p) => sum + p.amount, 0)
                         )}
                       </p>
                     </div>
                     <Link href={`/dashboard/events/${event.id}`}>
-                      <Button variant="outline">View Details</Button>
+                      <Button variant="outline" className="rounded-lg">View Details</Button>
                     </Link>
                   </div>
                 </CardContent>
