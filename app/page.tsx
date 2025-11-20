@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Logo } from "@/components/logo"
 import { StructuredData } from "@/components/structured-data"
 import type { Metadata } from "next"
+import type { Organization, LocalBusiness } from "@/types/structured-data"
 
 export const metadata: Metadata = {
   title: "Home",
@@ -17,7 +18,7 @@ export const metadata: Metadata = {
 }
 
 export default function Home() {
-  const organizationSchema = {
+  const organizationSchema: Organization = {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: "Choice Menu",
@@ -29,7 +30,7 @@ export default function Home() {
     },
   }
 
-  const localBusinessSchema = {
+  const localBusinessSchema: LocalBusiness = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     name: "Choice Menu",

@@ -1,7 +1,7 @@
 import { Organization, LocalBusiness, Service, WebSite } from "@/types/structured-data"
 
 interface StructuredDataProps {
-  data: Organization | LocalBusiness | Service | WebSite | any
+  data: Organization | LocalBusiness | Service | WebSite | Record<string, unknown>
 }
 
 export function StructuredData({ data }: StructuredDataProps) {

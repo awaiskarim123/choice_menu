@@ -28,6 +28,10 @@ export interface LocalBusiness {
   }
   priceRange?: string
   servesCuisine?: string
+  areaServed?: {
+    "@type": "Country"
+    name: string
+  }
 }
 
 export interface Service {
