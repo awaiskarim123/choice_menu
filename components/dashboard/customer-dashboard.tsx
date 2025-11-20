@@ -8,8 +8,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useToast } from "@/components/ui/use-toast"
 import { formatDate, formatCurrency } from "@/lib/utils"
 import { fetchWithAuth } from "@/lib/api-client"
-import { Calendar, DollarSign, FileText, Upload, LogOut, User } from "lucide-react"
-import { Logo } from "@/components/logo"
+import { Calendar, DollarSign, FileText, Upload } from "lucide-react"
+import { Sidebar } from "@/components/sidebar"
 
 type Event = {
   id: string
@@ -92,58 +92,45 @@ export default function CustomerDashboard() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "CONFIRMED":
-        return "bg-green-100 text-green-800"
+        return "bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/20"
       case "PENDING":
-        return "bg-yellow-100 text-yellow-800"
+        return "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border border-yellow-500/20"
       case "REJECTED":
-        return "bg-red-100 text-red-800"
+        return "bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20"
       case "COMPLETED":
-        return "bg-blue-100 text-blue-800"
+        return "bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20"
       default:
-        return "bg-gray-100 text-gray-800"
+        return "bg-muted text-muted-foreground border border-border"
     }
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <Logo href="/" size="sm" />
-          <div className="flex gap-4 items-center">
-            <span className="text-sm text-muted-foreground">
-              Welcome, {user?.name}
-            </span>
-            <Link href="/book-event">
-              <Button>Book New Event</Button>
-            </Link>
-            <Button variant="outline" onClick={logout}>
-              <LogOut className="w-4 h-4 mr-2" />
-              Logout
-            </Button>
-          </div>
-        </div>
-      </header>
-
-      <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-background">
+      <Sidebar />
+      <div className="lg:pl-64 pt-16 lg:pt-0">
+        <div className="container mx-auto px-4 py-8">
         {/* Stats Cards */}
         <div className="grid md:grid-cols-3 gap-6 mb-8">
-          <Card>
+          <Card className="border-2 hover:border-primary/50 transition-colors shadow-sm hover:shadow-md">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Bookings</CardTitle>
-              <Calendar className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium text-muted-foreground">Total Bookings</CardTitle>
+              <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Calendar className="h-5 w-5 text-primary" />
+              </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{events.length}</div>
+              <div className="text-3xl font-bold">{events.length}</div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="border-2 hover:border-primary/50 transition-colors shadow-sm hover:shadow-md">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Pending Payments</CardTitle>
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium text-muted-foreground">Pending Payments</CardTitle>
+              <div className="h-10 w-10 rounded-lg bg-yellow-500/10 flex items-center justify-center">
+                <DollarSign className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
+              </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
+              <div className="text-3xl font-bold">
                 {formatCurrency(
                   events.reduce((sum, event) => {
                     return (
@@ -157,13 +144,15 @@ export default function CustomerDashboard() {
               </div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="border-2 hover:border-primary/50 transition-colors shadow-sm hover:shadow-md">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Upcoming Events</CardTitle>
-              <Calendar className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium text-muted-foreground">Upcoming Events</CardTitle>
+              <div className="h-10 w-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                <Calendar className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+              </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
+              <div className="text-3xl font-bold">
                 {
                   events.filter(
                     (e) =>
@@ -220,17 +209,17 @@ export default function CustomerDashboard() {
             </Card>
           ) : (
             events.map((event) => (
-              <Card key={event.id}>
+              <Card key={event.id} className="border-2 hover:border-primary/30 transition-all shadow-sm hover:shadow-md">
                 <CardHeader>
                   <div className="flex justify-between items-start">
-                    <div>
-                      <CardTitle>{event.eventName}</CardTitle>
-                      <CardDescription>
+                    <div className="flex-1">
+                      <CardTitle className="text-xl mb-1">{event.eventName}</CardTitle>
+                      <CardDescription className="text-base">
                         {event.eventType} • {formatDate(event.eventDate)}
                       </CardDescription>
                     </div>
                     <span
-                      className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
+                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wide ${getStatusColor(
                         event.status
                       )}`}
                     >
@@ -246,7 +235,7 @@ export default function CustomerDashboard() {
                         {event.payments.map((payment) => (
                           <div
                             key={payment.id}
-                            className="flex justify-between items-center p-2 bg-gray-50 rounded"
+                            className="flex justify-between items-center p-3 bg-muted/50 rounded-lg border border-border"
                           >
                             <div>
                               <span className="font-medium capitalize">{payment.type} Payment</span>
@@ -257,12 +246,12 @@ export default function CustomerDashboard() {
                             <div className="flex items-center gap-4">
                               <span className="font-semibold">{formatCurrency(payment.amount)}</span>
                               <span
-                                className={`px-2 py-1 rounded text-xs ${
+                                className={`px-2.5 py-1 rounded-md text-xs font-medium ${
                                   payment.status === "PAID"
-                                    ? "bg-green-100 text-green-800"
+                                    ? "bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/20"
                                     : payment.status === "OVERDUE"
-                                    ? "bg-red-100 text-red-800"
-                                    : "bg-yellow-100 text-yellow-800"
+                                    ? "bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20"
+                                    : "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border border-yellow-500/20"
                                 }`}
                               >
                                 {payment.status}
@@ -282,6 +271,7 @@ export default function CustomerDashboard() {
               </Card>
             ))
           )}
+        </div>
         </div>
       </div>
     </div>

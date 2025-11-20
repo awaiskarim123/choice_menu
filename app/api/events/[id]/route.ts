@@ -1,11 +1,21 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { verifyAuth } from "@/lib/auth"
 
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
+    // Check authentication
+    const authResult = await verifyAuth(request)
+    if (!authResult) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      )
+    }
+
     const event = await prisma.event.findUnique({
       where: { id: params.id },
       include: {
@@ -36,6 +46,11 @@ export async function GET(
       return NextResponse.json({ error: "Event not found" }, { status: 404 })
     }
 
+    // RBAC: Non-admin users can only view their own events
+    if (authResult.role !== "ADMIN" && event.customerId !== authResult.userId) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+    }
+
     return NextResponse.json({ event })
   } catch (error) {
     console.error("Error fetching event:", error)
@@ -51,6 +66,29 @@ export async function PATCH(
   { params }: { params: { id: string } }
 ) {
   try {
+    // Check authentication
+    const authResult = await verifyAuth(request)
+    if (!authResult) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      )
+    }
+
+    // Check if event exists and user has permission
+    const event = await prisma.event.findUnique({
+      where: { id: params.id },
+    })
+
+    if (!event) {
+      return NextResponse.json({ error: "Event not found" }, { status: 404 })
+    }
+
+    // RBAC: Only ADMIN or event owner can update
+    if (authResult.role !== "ADMIN" && event.customerId !== authResult.userId) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+    }
+
     const body = await request.json()
     // Skip validation for now - use body directly
     const validatedData = body as any
@@ -69,7 +107,7 @@ export async function PATCH(
       updateData.delayDate = new Date()
     }
 
-    const event = await prisma.event.update({
+    const updatedEvent = await prisma.event.update({
       where: { id: params.id },
       data: updateData,
       include: {
@@ -78,7 +116,7 @@ export async function PATCH(
       },
     })
 
-    return NextResponse.json({ message: "Event updated successfully", event })
+    return NextResponse.json({ message: "Event updated successfully", event: updatedEvent })
   } catch (error: any) {
     if (error.name === "ZodError") {
       return NextResponse.json(
@@ -100,12 +138,26 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
+    // Check authentication
+    const authResult = await verifyAuth(request)
+    if (!authResult) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      )
+    }
+
     const event = await prisma.event.findUnique({
       where: { id: params.id },
     })
 
     if (!event) {
       return NextResponse.json({ error: "Event not found" }, { status: 404 })
+    }
+
+    // RBAC: Only ADMIN or event owner can delete
+    if (authResult.role !== "ADMIN" && event.customerId !== authResult.userId) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 
     await prisma.event.delete({

@@ -232,7 +232,14 @@ export default function BookEventPage() {
   }
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    )
   }
 
   if (!user) {
@@ -244,10 +251,10 @@ export default function BookEventPage() {
   const finalPayment = totalAmount * 0.3
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
+    <div className="min-h-screen bg-background py-12">
       <div className="container mx-auto px-4 max-w-4xl">
-        <Card>
-          <CardHeader className="bg-primary text-primary-foreground">
+        <Card className="border-2 shadow-lg">
+          <CardHeader className="bg-primary text-primary-foreground rounded-t-lg">
             <CardTitle className="text-2xl text-center">Event Reservation Form - Client Information</CardTitle>
             <CardDescription className="text-primary-foreground/90 text-center">
               Choice Menu Private Limited - Catering & Tent Service
@@ -322,7 +329,7 @@ export default function BookEventPage() {
                     <textarea
                       id="customerAddress"
                       {...register("customerAddress")}
-                      className="w-full min-h-[80px] rounded-md border border-input bg-background px-3 py-2 text-sm cursor-pointer"
+                      className="w-full min-h-[80px] rounded-lg border-2 border-input bg-background px-3 py-2 text-sm cursor-pointer focus:border-primary transition-colors"
                       placeholder="Complete address for event setup"
                     />
                   </div>
@@ -427,25 +434,25 @@ export default function BookEventPage() {
                   <div className="space-y-2">
                     <Label>Food Included *</Label>
                     <div className="flex gap-4 items-center">
-                      <label className="flex items-center gap-2 cursor-pointer">
+                      <label className="flex items-center gap-2 cursor-pointer p-2 rounded-lg hover:bg-muted/50 transition-colors">
                         <input
                           type="radio"
                           name="foodIncluded"
                           value="yes"
                           checked={foodIncluded === true}
                           onChange={() => setValue("foodIncluded", true)}
-                          className="cursor-pointer"
+                          className="cursor-pointer w-4 h-4 text-primary focus:ring-2 focus:ring-primary"
                         />
                         <span>Yes</span>
                       </label>
-                      <label className="flex items-center gap-2 cursor-pointer">
+                      <label className="flex items-center gap-2 cursor-pointer p-2 rounded-lg hover:bg-muted/50 transition-colors">
                         <input
                           type="radio"
                           name="foodIncluded"
                           value="no"
                           checked={foodIncluded === false}
                           onChange={() => setValue("foodIncluded", false)}
-                          className="cursor-pointer"
+                          className="cursor-pointer w-4 h-4 text-primary focus:ring-2 focus:ring-primary"
                         />
                         <span>No</span>
                       </label>
@@ -485,7 +492,7 @@ export default function BookEventPage() {
                 <h3 className="text-lg font-semibold">Services Selection</h3>
                 
                 {/* Tent Service with Amount */}
-                <div className="space-y-2 p-4 bg-gray-50 rounded-md">
+                <div className="space-y-2 p-4 bg-muted/50 rounded-lg border border-border">
                   <Label htmlFor="tentServiceAmount">Tent Service: PKR</Label>
                   <Input
                     id="tentServiceAmount"
@@ -494,7 +501,7 @@ export default function BookEventPage() {
                     value={tentServiceAmount}
                     onChange={(e) => setTentServiceAmount(parseFloat(e.target.value) || 0)}
                     placeholder="Enter amount"
-                    className="cursor-pointer"
+                    className="cursor-pointer border-2"
                   />
                   <p className="text-sm text-muted-foreground">
                     (Includes tent structure with sidewalls, basic flooring, setup)
@@ -504,15 +511,15 @@ export default function BookEventPage() {
                 {/* Other Services */}
                 <div className="grid md:grid-cols-3 gap-4">
                   {services.map((service) => (
-                    <div key={service.id} className="flex items-center space-x-2">
+                    <div key={service.id} className="flex items-center space-x-2 p-3 rounded-lg border border-border hover:bg-muted/50 transition-colors">
                       <input
                         type="checkbox"
                         id={`service-${service.id}`}
                         checked={!!selectedServices[service.id]}
                         onChange={() => toggleService(service)}
-                        className="w-4 h-4"
+                        className="w-4 h-4 rounded border-2 border-input text-primary focus:ring-2 focus:ring-primary cursor-pointer"
                       />
-                      <label htmlFor={`service-${service.id}`} className="text-sm font-medium cursor-pointer">
+                      <label htmlFor={`service-${service.id}`} className="text-sm font-medium cursor-pointer flex-1">
                         {service.name}
                       </label>
                     </div>
@@ -520,10 +527,10 @@ export default function BookEventPage() {
                 </div>
 
                 {/* Total Services Amount */}
-                <div className="p-4 bg-primary/5 rounded-md">
+                <div className="p-4 bg-primary/10 rounded-lg border border-primary/20">
                   <div className="flex justify-between items-center">
                     <span className="font-semibold">Total Services Amount:</span>
-                    <span className="text-xl font-bold">{formatCurrency(totalAmount)}</span>
+                    <span className="text-xl font-bold text-primary">{formatCurrency(totalAmount)}</span>
                   </div>
                 </div>
               </div>
@@ -540,15 +547,15 @@ export default function BookEventPage() {
                   <li>Remaining balance to be paid after event completion</li>
                 </ul>
                 <div className="grid md:grid-cols-3 gap-4 mt-4">
-                  <div className="p-4 bg-gray-50 rounded-md">
+                  <div className="p-4 bg-muted/50 rounded-lg border border-border">
                     <Label>First payment (20%)</Label>
                     <p className="text-lg font-semibold mt-2">{formatCurrency(firstPayment)}</p>
                   </div>
-                  <div className="p-4 bg-gray-50 rounded-md">
+                  <div className="p-4 bg-muted/50 rounded-lg border border-border">
                     <Label>Second payment (50%)</Label>
                     <p className="text-lg font-semibold mt-2">{formatCurrency(secondPayment)}</p>
                   </div>
-                  <div className="p-4 bg-gray-50 rounded-md">
+                  <div className="p-4 bg-muted/50 rounded-lg border border-border">
                     <Label>Final payment (30%)</Label>
                     <p className="text-lg font-semibold mt-2">{formatCurrency(finalPayment)}</p>
                   </div>
@@ -559,14 +566,14 @@ export default function BookEventPage() {
               <div className="space-y-4 border-b pb-6">
                 <h3 className="text-lg font-semibold">Policies</h3>
                 <div className="space-y-3 text-sm">
-                  <div className="p-3 bg-yellow-50 rounded-md">
-                    <p className="font-semibold mb-1">Cancellation Policy:</p>
+                  <div className="p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+                    <p className="font-semibold mb-1 text-yellow-600 dark:text-yellow-400">Cancellation Policy:</p>
                     <p className="text-muted-foreground">
                       In case of cancellation, a 20% cancellation fee will be deducted from the total booking amount if not informed before a week and is not a natural cause.
                     </p>
                   </div>
-                  <div className="p-3 bg-blue-50 rounded-md">
-                    <p className="font-semibold mb-1">Event Delay Policy:</p>
+                  <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+                    <p className="font-semibold mb-1 text-blue-600 dark:text-blue-400">Event Delay Policy:</p>
                     <p className="text-muted-foreground">
                       If the event is delayed, we will cooperate with clients to accommodate the delay, including adjusting the event setup, food service, and other logistics where possible.
                     </p>
@@ -577,20 +584,20 @@ export default function BookEventPage() {
               {/* Special Notes */}
               <div className="space-y-2">
                 <Label htmlFor="specialRequests">Special Notes/Requests</Label>
-                <textarea
-                  id="specialRequests"
-                  {...register("specialRequests")}
-                  className="w-full min-h-[100px] rounded-md border border-input bg-background px-3 py-2 text-sm cursor-pointer"
-                  placeholder="Any special requirements or notes..."
-                />
+                    <textarea
+                      id="specialRequests"
+                      {...register("specialRequests")}
+                      className="w-full min-h-[100px] rounded-lg border-2 border-input bg-background px-3 py-2 text-sm cursor-pointer focus:border-primary transition-colors"
+                      placeholder="Any special requirements or notes..."
+                    />
               </div>
 
               <div className="flex gap-4 pt-4">
-                <Button type="submit" disabled={isSubmitting} className="flex-1">
+                <Button type="submit" disabled={isSubmitting} className="flex-1 rounded-lg" size="lg">
                   {isSubmitting ? "Submitting..." : "Submit Reservation"}
                 </Button>
                 <Link href="/">
-                  <Button type="button" variant="outline">Cancel</Button>
+                  <Button type="button" variant="outline" className="rounded-lg" size="lg">Cancel</Button>
                 </Link>
               </div>
             </form>

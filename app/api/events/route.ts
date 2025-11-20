@@ -2,9 +2,19 @@ import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { eventBookingSchema } from "@/lib/validations"
 import { calculatePaymentSchedule } from "@/lib/payment-schedule"
+import { verifyAuth } from "@/lib/auth"
 
 export async function GET(request: NextRequest) {
   try {
+    // Check authentication
+    const authResult = await verifyAuth(request)
+    if (!authResult) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      )
+    }
+
     const { searchParams } = new URL(request.url)
     const status = searchParams.get("status")
     const customerId = searchParams.get("customerId")
@@ -14,8 +24,11 @@ export async function GET(request: NextRequest) {
 
     const where: any = {}
 
-    // Filter by customerId if provided
-    if (customerId) {
+    // RBAC: If user is not ADMIN, only show their own events
+    if (authResult.role !== "ADMIN") {
+      where.customerId = authResult.userId
+    } else if (customerId) {
+      // Admin can filter by customerId if provided
       where.customerId = customerId
     }
 

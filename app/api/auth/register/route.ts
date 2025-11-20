@@ -1,12 +1,20 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
-import { hashPassword } from "@/lib/auth"
+import { hashPassword, verifyAuth } from "@/lib/auth"
 import { registerSchema } from "@/lib/validations"
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     const validatedData = registerSchema.parse(body)
+
+    // Check authentication - only admins can create admin users
+    const authResult = await verifyAuth(request)
+    const isAdmin = authResult?.role === "ADMIN"
+    
+    // Force CUSTOMER role for public/unauthenticated registrations
+    // Only authenticated admins can create admin users (would need separate endpoint)
+    const userRole = isAdmin && body.role === "ADMIN" ? "ADMIN" : "CUSTOMER"
 
     // Check if user already exists
     const existingUser = await prisma.user.findFirst({
@@ -28,7 +36,7 @@ export async function POST(request: NextRequest) {
     // Hash password
     const hashedPassword = await hashPassword(validatedData.password)
 
-    // Create user
+    // Create user - always use CUSTOMER for public registration
     const user = await prisma.user.create({
       data: {
         name: validatedData.name,
@@ -36,7 +44,7 @@ export async function POST(request: NextRequest) {
         phone: validatedData.phone,
         cnic: validatedData.cnic || null,
         password: hashedPassword,
-        role: "CUSTOMER",
+        role: userRole,
       },
       select: {
         id: true,
