@@ -10,13 +10,12 @@ import { Input } from "@/components/ui/input"
 import { useToast } from "@/components/ui/use-toast"
 import { formatDate, formatCurrency } from "@/lib/utils"
 import { fetchWithAuth } from "@/lib/api-client"
-import { Logo } from "@/components/logo"
+import { Sidebar } from "@/components/sidebar"
 import {
   Calendar,
   DollarSign,
   Users,
   TrendingUp,
-  LogOut,
   Search,
   Filter,
 } from "lucide-react"
@@ -126,27 +125,10 @@ export default function AdminDashboard() {
   )
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <Logo href="/" size="sm" />
-          <div className="flex gap-4 items-center">
-            <span className="text-sm text-muted-foreground">
-              Welcome, {user?.name}
-            </span>
-            <Link href="/admin/services">
-              <Button variant="outline">Manage Services</Button>
-            </Link>
-            <Button variant="outline" onClick={logout}>
-              <LogOut className="w-4 h-4 mr-2" />
-              Logout
-            </Button>
-          </div>
-        </div>
-      </header>
-
-      <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-background">
+      <Sidebar />
+      <div className="lg:pl-64">
+        <div className="container mx-auto px-4 py-8">
         {/* Stats Cards */}
         {stats && (
           <div className="grid md:grid-cols-4 gap-6 mb-8">
@@ -273,6 +255,7 @@ export default function AdminDashboard() {
               </Card>
             ))
           )}
+        </div>
         </div>
       </div>
     </div>

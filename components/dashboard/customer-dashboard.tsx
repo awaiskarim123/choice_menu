@@ -8,8 +8,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useToast } from "@/components/ui/use-toast"
 import { formatDate, formatCurrency } from "@/lib/utils"
 import { fetchWithAuth } from "@/lib/api-client"
-import { Calendar, DollarSign, FileText, Upload, LogOut, User } from "lucide-react"
-import { Logo } from "@/components/logo"
+import { Calendar, DollarSign, FileText, Upload } from "lucide-react"
+import { Sidebar } from "@/components/sidebar"
 
 type Event = {
   id: string
@@ -105,27 +105,10 @@ export default function CustomerDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <Logo href="/" size="sm" />
-          <div className="flex gap-4 items-center">
-            <span className="text-sm text-muted-foreground">
-              Welcome, {user?.name}
-            </span>
-            <Link href="/book-event">
-              <Button>Book New Event</Button>
-            </Link>
-            <Button variant="outline" onClick={logout}>
-              <LogOut className="w-4 h-4 mr-2" />
-              Logout
-            </Button>
-          </div>
-        </div>
-      </header>
-
-      <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-background">
+      <Sidebar />
+      <div className="lg:pl-64">
+        <div className="container mx-auto px-4 py-8">
         {/* Stats Cards */}
         <div className="grid md:grid-cols-3 gap-6 mb-8">
           <Card>
@@ -282,6 +265,7 @@ export default function CustomerDashboard() {
               </Card>
             ))
           )}
+        </div>
         </div>
       </div>
     </div>

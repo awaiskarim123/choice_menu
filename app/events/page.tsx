@@ -1,12 +1,14 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
+import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Logo } from "@/components/logo"
+import { Sidebar } from "@/components/sidebar"
 import { formatDate, formatCurrency } from "@/lib/utils"
 import { useToast } from "@/components/ui/use-toast"
+import { useAuth } from "@/contexts/auth-context"
 import { Calendar, MapPin, Users, DollarSign, Clock, CheckCircle2, XCircle, Clock3, MoreVertical } from "lucide-react"
 
 type Event = {
@@ -57,30 +59,64 @@ type Event = {
 }
 
 export default function EventsPage() {
+  const router = useRouter()
+  const { user, token, loading: authLoading } = useAuth()
   const [events, setEvents] = useState<Event[]>([])
   const [loading, setLoading] = useState(true)
   const [statusFilter, setStatusFilter] = useState("")
   const [openMenuId, setOpenMenuId] = useState<string | null>(null)
   const { toast } = useToast()
 
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push("/auth/login")
+    }
+  }, [user, authLoading, router])
+
   const fetchEvents = useCallback(async () => {
+    if (!token || !user) {
+      setLoading(false)
+      return
+    }
+
     try {
       const url = new URL("/api/events", window.location.origin)
       if (statusFilter) url.searchParams.set("status", statusFilter)
 
-      const response = await fetch(url.toString())
+      const response = await fetch(url.toString(), {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          router.push("/auth/login")
+          return
+        }
+        throw new Error("Failed to fetch events")
+      }
+
       const data = await response.json()
       setEvents(data.events || [])
     } catch (error) {
       console.error("Error fetching events:", error)
+      toast({
+        title: "Error",
+        description: "Failed to load events. Please try again.",
+        variant: "destructive",
+      })
     } finally {
       setLoading(false)
     }
-  }, [statusFilter])
+  }, [statusFilter, token, user, router, toast])
 
   useEffect(() => {
-    fetchEvents()
-  }, [fetchEvents])
+    if (user && token) {
+      fetchEvents()
+    }
+  }, [fetchEvents, user, token])
 
   const getStatusInfo = (status: string) => {
     switch (status) {
@@ -143,10 +179,22 @@ export default function EventsPage() {
   }
 
   const updateEventStatus = async (eventId: string, status: string) => {
+    if (!token) {
+      toast({
+        title: "Error",
+        description: "You must be logged in to update event status",
+        variant: "destructive",
+      })
+      return
+    }
+
     try {
       const response = await fetch(`/api/events/${eventId}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({ status }),
       })
 
@@ -173,49 +221,33 @@ export default function EventsPage() {
     }
   }
 
-  if (loading) {
+  // Show loading while checking authentication
+  if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <nav className="border-b bg-white">
-          <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-            <Logo href="/" size="md" showText={true} />
-            <div className="flex gap-4">
-              <Link href="/">
-                <Button variant="ghost">Home</Button>
-              </Link>
-              <Link href="/book-event">
-                <Button>Book Event</Button>
-              </Link>
+      <div className="min-h-screen bg-background">
+        <Sidebar />
+        <div className="lg:pl-64">
+          <div className="min-h-screen flex items-center justify-center">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+              <p className="text-muted-foreground">Loading events...</p>
             </div>
-          </div>
-        </nav>
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Loading events...</p>
           </div>
         </div>
       </div>
     )
   }
 
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <nav className="border-b bg-white">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <Logo href="/" size="md" showText={true} />
-          <div className="flex gap-4">
-            <Link href="/">
-              <Button variant="ghost">Home</Button>
-            </Link>
-            <Link href="/book-event">
-              <Button>Book Event</Button>
-            </Link>
-          </div>
-        </div>
-      </nav>
+  // Don't render if not authenticated (will redirect)
+  if (!user || !token) {
+    return null
+  }
 
-      <div className="container mx-auto px-4 py-8">
+  return (
+    <div className="min-h-screen bg-background">
+      <Sidebar />
+      <div className="lg:pl-64">
+        <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold">Events List</h1>
           <div className="flex gap-2">
@@ -335,12 +367,12 @@ export default function EventsPage() {
                                     className="fixed inset-0 z-10"
                                     onClick={() => setOpenMenuId(null)}
                                   />
-                                  <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-20">
+                                  <div className="absolute right-0 mt-2 w-48 bg-card border border-border rounded-md shadow-lg z-20">
                                     <div className="py-1">
                                       {event.status !== "CONFIRMED" && (
                                         <button
                                           onClick={() => updateEventStatus(event.id, "CONFIRMED")}
-                                          className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 flex items-center gap-2"
+                                          className="w-full text-left px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground flex items-center gap-2 text-foreground"
                                         >
                                           <CheckCircle2 className="w-4 h-4 text-green-600" />
                                           Mark as Confirmed
@@ -349,7 +381,7 @@ export default function EventsPage() {
                                       {event.status !== "COMPLETED" && (
                                         <button
                                           onClick={() => updateEventStatus(event.id, "COMPLETED")}
-                                          className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 flex items-center gap-2"
+                                          className="w-full text-left px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground flex items-center gap-2 text-foreground"
                                         >
                                           <CheckCircle2 className="w-4 h-4 text-blue-600" />
                                           Mark as Completed
@@ -370,6 +402,7 @@ export default function EventsPage() {
             </CardContent>
           </Card>
         )}
+        </div>
       </div>
     </div>
   )

@@ -19,6 +19,7 @@ export default function RegisterPage() {
     phone: "",
     password: "",
     cnic: "",
+    role: "CUSTOMER" as "ADMIN" | "CUSTOMER",
   })
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -115,6 +116,19 @@ export default function RegisterPage() {
                 required
                 minLength={6}
               />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="role">Role</Label>
+              <select
+                id="role"
+                value={formData.role}
+                onChange={(e) => setFormData({ ...formData, role: e.target.value as "ADMIN" | "CUSTOMER" })}
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                required
+              >
+                <option value="CUSTOMER">User</option>
+                <option value="ADMIN">Admin</option>
+              </select>
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Creating account..." : "Register"}
