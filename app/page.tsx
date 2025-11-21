@@ -12,8 +12,14 @@ import { useAuth } from "@/contexts/auth-context"
 export default function Home() {
   const { user, logout } = useAuth()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
+
+  // Prevent hydration mismatch by only rendering auth-dependent UI after mount
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   // Handle Escape key to close menu
   useEffect(() => {
@@ -96,7 +102,7 @@ export default function Home() {
             <Link href="/book-event">
               <Button className="text-sm lg:text-base">Book Event</Button>
             </Link>
-            {user ? (
+            {mounted && user ? (
               <div className="flex items-center gap-2">
                 <Link href="/dashboard">
                   <Button variant="outline" className="text-sm lg:text-base flex items-center gap-2">
@@ -156,7 +162,7 @@ export default function Home() {
               <Link href="/book-event" onClick={() => setIsMobileMenuOpen(false)} role="menuitem" tabIndex={0}>
                 <Button className="w-full justify-start">Book Event</Button>
               </Link>
-              {user ? (
+              {mounted && user ? (
                 <>
                   <Link href="/dashboard" onClick={() => setIsMobileMenuOpen(false)} role="menuitem" tabIndex={0}>
                     <Button variant="outline" className="w-full justify-start">
