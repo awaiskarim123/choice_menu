@@ -118,15 +118,15 @@ export default function EventDetailPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "CONFIRMED":
-        return "bg-green-100 text-green-800"
+        return "bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/20"
       case "PENDING":
-        return "bg-yellow-100 text-yellow-800"
+        return "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border border-yellow-500/20"
       case "REJECTED":
-        return "bg-red-100 text-red-800"
+        return "bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20"
       case "COMPLETED":
-        return "bg-blue-100 text-blue-800"
+        return "bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20"
       default:
-        return "bg-gray-100 text-gray-800"
+        return "bg-muted text-muted-foreground border border-border"
     }
   }
 
@@ -263,7 +263,7 @@ export default function EventDetailPage() {
                 {event.eventServices.map((es) => (
                   <div
                     key={es.id}
-                    className="flex justify-between items-center p-4 bg-gray-50 rounded"
+                    className="flex justify-between items-center p-4 bg-muted rounded"
                   >
                     <div>
                       <p className="font-medium">{es.service.name}</p>
@@ -297,7 +297,7 @@ export default function EventDetailPage() {
                 {event.payments.map((payment) => (
                   <div
                     key={payment.id}
-                    className="flex justify-between items-center p-4 bg-gray-50 rounded"
+                    className="flex justify-between items-center p-4 bg-muted rounded"
                   >
                     <div>
                       <p className="font-medium capitalize">{payment.type} Payment</p>
@@ -305,7 +305,7 @@ export default function EventDetailPage() {
                         Due: {formatDate(payment.dueDate)}
                       </p>
                       {payment.paidDate && (
-                        <p className="text-sm text-green-600">
+                        <p className="text-sm text-green-600 dark:text-green-400">
                           Paid: {formatDate(payment.paidDate)}
                         </p>
                       )}
@@ -318,12 +318,12 @@ export default function EventDetailPage() {
                     <div className="text-right">
                       <p className="font-semibold">{formatCurrency(payment.amount)}</p>
                       <span
-                        className={`px-2 py-1 rounded text-xs ${
+                        className={`px-2 py-1 rounded text-xs border ${
                           payment.status === "PAID"
-                            ? "bg-green-100 text-green-800"
+                            ? "bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20"
                             : payment.status === "OVERDUE"
-                            ? "bg-red-100 text-red-800"
-                            : "bg-yellow-100 text-yellow-800"
+                            ? "bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20"
+                            : "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/20"
                         }`}
                       >
                         {payment.status}
@@ -349,7 +349,7 @@ export default function EventDetailPage() {
                       href={doc.filePath}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="block p-3 bg-gray-50 rounded hover:bg-gray-100"
+                      className="block p-3 bg-muted rounded hover:bg-muted/80 transition-colors"
                     >
                       <p className="font-medium">{doc.fileName}</p>
                       <p className="text-sm text-muted-foreground">{doc.documentType}</p>
