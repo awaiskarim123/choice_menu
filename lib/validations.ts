@@ -13,7 +13,7 @@ export const registerSchema = z.object({
   phone: z.string().min(10, "Phone number must be at least 10 digits"),
   password: z.string().min(6, "Password must be at least 6 characters"),
   cnic: z.string().optional(),
-  role: z.literal("CUSTOMER").default("CUSTOMER"),
+  role: z.enum(["ADMIN", "CUSTOMER"]).default("CUSTOMER"),
 })
 
 export const eventBookingSchema = z.object({
@@ -34,6 +34,11 @@ export const eventBookingSchema = z.object({
   contactPhone: z.string().min(10, "Contact phone is required"),
   contactEmail: z.string().email("Invalid email").optional().or(z.literal("")),
   serviceIds: z.array(z.string()).min(1, "At least one service must be selected"),
+  // Signature and payment fields
+  lastPaymentDate: z.string().optional(),
+  clientSignature: z.string().optional(),
+  representativeSignature: z.string().optional(),
+  signatureDate: z.string().optional(),
   // Legacy fields for backward compatibility
   eventDate: z.string().optional(),
   eventTime: z.string().optional(),

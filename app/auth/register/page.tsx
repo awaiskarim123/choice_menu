@@ -118,6 +118,22 @@ export default function RegisterPage() {
                 minLength={6}
               />
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="role">Role</Label>
+              <select
+                id="role"
+                value={formData.role}
+                onChange={(e) => setFormData({ ...formData, role: e.target.value as Role })}
+                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                required
+              >
+                <option value="CUSTOMER">Customer</option>
+                <option value="ADMIN">Admin</option>
+              </select>
+              <p className="text-xs text-muted-foreground">
+                Note: Admin role creation may require additional verification
+              </p>
+            </div>
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Creating account..." : "Register"}
             </Button>

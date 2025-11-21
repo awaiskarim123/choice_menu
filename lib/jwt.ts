@@ -7,10 +7,8 @@ if (!JWT_SECRET) {
   throw new Error("JWT_SECRET must be configured in environment variables")
 }
 
-// Use StringValue type for expiresIn (compatible with jsonwebtoken's SignOptions)
-// StringValue accepts formats like "7d", "1h", "30m", etc.
-type StringValue = string & { __brand: "StringValue" }
-const JWT_EXPIRES_IN: StringValue = (process.env.JWT_EXPIRES_IN || "7d") as StringValue
+// expiresIn accepts number (seconds) or string (timespan like "7d", "1h", "30m")
+const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "7d"
 
 export interface JWTPayload {
   userId: string
@@ -21,7 +19,9 @@ export interface JWTPayload {
 }
 
 export function generateToken(payload: JWTPayload): string {
-  const signOptions: SignOptions = { expiresIn: JWT_EXPIRES_IN }
+  const signOptions: SignOptions = { 
+    expiresIn: JWT_EXPIRES_IN as string | number 
+  }
   return jwt.sign(payload, JWT_SECRET, signOptions)
 }
 

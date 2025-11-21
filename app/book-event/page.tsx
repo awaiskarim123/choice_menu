@@ -40,6 +40,10 @@ type FormData = {
   contactPhone: string
   contactEmail?: string
   serviceIds: string[]
+  lastPaymentDate?: string
+  clientSignature?: string
+  representativeSignature?: string
+  signatureDate?: string
 }
 
 export default function BookEventPage() {
@@ -65,6 +69,7 @@ export default function BookEventPage() {
       foodIncluded: false,
       serviceIds: [],
       budget: 0,
+      signatureDate: new Date().toISOString().split('T')[0],
     },
   })
 
@@ -566,6 +571,7 @@ export default function BookEventPage() {
                   <Input
                     id="lastPaymentDate"
                     type="date"
+                    {...register("lastPaymentDate")}
                     className="cursor-pointer"
                     placeholder="Select last payment date"
                   />
@@ -611,6 +617,7 @@ export default function BookEventPage() {
                     <Input
                       id="clientSignature"
                       type="text"
+                      {...register("clientSignature")}
                       className="cursor-pointer"
                       placeholder="Client signature"
                     />
@@ -620,6 +627,7 @@ export default function BookEventPage() {
                     <Input
                       id="representativeSignature"
                       type="text"
+                      {...register("representativeSignature")}
                       className="cursor-pointer"
                       placeholder="Representative signature"
                     />
@@ -629,6 +637,7 @@ export default function BookEventPage() {
                     <Input
                       id="signatureDate"
                       type="date"
+                      {...register("signatureDate")}
                       className="cursor-pointer"
                       defaultValue={new Date().toISOString().split('T')[0]}
                     />
