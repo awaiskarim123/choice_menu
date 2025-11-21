@@ -113,11 +113,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setToken(null)
         setUser(null)
       }
-    } else if (!storedToken && !storedUser && (token || user)) {
-      // If localStorage is cleared but state still has values, clear state
-      setToken(null)
-      setUser(null)
     }
+    // Don't clear state if localStorage is empty - it might be a timing issue
+    // Only clear on explicit logout or when we get a 401 from the API
   }, [pathname]) // Only depend on pathname to trigger on route changes
 
   useEffect(() => {
