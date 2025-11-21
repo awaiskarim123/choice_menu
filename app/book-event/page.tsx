@@ -13,6 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useToast } from "@/components/ui/use-toast"
 import Link from "next/link"
 import { formatCurrency } from "@/lib/utils"
+import { Phone, MessageCircle, Mail, Share2, MapPin } from "lucide-react"
 
 type Service = {
   id: string
@@ -255,9 +256,9 @@ export default function BookEventPage() {
       <div className="container mx-auto px-4 max-w-4xl">
         <Card className="border-2 shadow-lg">
           <CardHeader className="bg-primary text-primary-foreground rounded-t-lg">
-            <CardTitle className="text-2xl text-center">Event Reservation Form - Client Information</CardTitle>
+            <CardTitle className="text-2xl text-center">Event Reservation Form Client Information</CardTitle>
             <CardDescription className="text-primary-foreground/90 text-center">
-              Choice Menu Private Limited - Catering & Tent Service
+              Choice Menu private Limited
             </CardDescription>
           </CardHeader>
           <CardContent className="pt-6">
@@ -560,6 +561,15 @@ export default function BookEventPage() {
                     <p className="text-lg font-semibold mt-2">{formatCurrency(finalPayment)}</p>
                   </div>
                 </div>
+                <div className="mt-4 space-y-2">
+                  <Label htmlFor="lastPaymentDate">Last Payment Date</Label>
+                  <Input
+                    id="lastPaymentDate"
+                    type="date"
+                    className="cursor-pointer"
+                    placeholder="Select last payment date"
+                  />
+                </div>
               </div>
 
               {/* Policies */}
@@ -582,14 +592,96 @@ export default function BookEventPage() {
               </div>
 
               {/* Special Notes */}
-              <div className="space-y-2">
+              <div className="space-y-2 border-b pb-6">
                 <Label htmlFor="specialRequests">Special Notes/Requests</Label>
-                    <textarea
-                      id="specialRequests"
-                      {...register("specialRequests")}
-                      className="w-full min-h-[100px] rounded-lg border-2 border-input bg-background px-3 py-2 text-sm cursor-pointer focus:border-primary transition-colors"
-                      placeholder="Any special requirements or notes..."
+                <textarea
+                  id="specialRequests"
+                  {...register("specialRequests")}
+                  className="w-full min-h-[100px] rounded-lg border-2 border-input bg-background px-3 py-2 text-sm cursor-pointer focus:border-primary transition-colors"
+                  placeholder="Any special requirements or notes..."
+                />
+              </div>
+
+              {/* Signatures Section */}
+              <div className="space-y-4 border-b pb-6">
+                <h3 className="text-lg font-semibold">Signatures</h3>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="clientSignature">Client&apos;s Signature</Label>
+                    <Input
+                      id="clientSignature"
+                      type="text"
+                      className="cursor-pointer"
+                      placeholder="Client signature"
                     />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="representativeSignature">Representative&apos;s Signature</Label>
+                    <Input
+                      id="representativeSignature"
+                      type="text"
+                      className="cursor-pointer"
+                      placeholder="Representative signature"
+                    />
+                  </div>
+                  <div className="space-y-2 md:col-span-2">
+                    <Label htmlFor="signatureDate">Date</Label>
+                    <Input
+                      id="signatureDate"
+                      type="date"
+                      className="cursor-pointer"
+                      defaultValue={new Date().toISOString().split('T')[0]}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Booking Confirmation Message */}
+              <div className="space-y-4 border-b pb-6">
+                <div className="p-4 bg-primary/10 border border-primary/20 rounded-lg">
+                  <h3 className="text-lg font-semibold mb-2">Booking Confirmation</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Once your reservation is confirmed and a copy of your CNIC is provided, our team will contact you to finalize all details and ensure a seamless event setup. For further inquiries or changes to your booking, please contact us at:
+                  </p>
+                  <div className="grid sm:grid-cols-2 gap-4 text-sm">
+                    <div className="space-y-2">
+                      <div className="font-semibold">Ali Ahmed Jan (Executive Chef)</div>
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <Phone className="h-4 w-4" />
+                        <a href="tel:03555833735" className="hover:text-primary">0355-5833735</a>
+                      </div>
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <MessageCircle className="h-4 w-4 text-green-600" />
+                        <a href="https://wa.me/923126967522" target="_blank" rel="noopener noreferrer" className="hover:text-green-600">0312-6967522</a>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="font-semibold">Sher Baz Khan (General Manager)</div>
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <Phone className="h-4 w-4" />
+                        <a href="tel:03555021522" className="hover:text-primary">03555021522</a>
+                      </div>
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <MessageCircle className="h-4 w-4 text-green-600" />
+                        <a href="https://wa.me/923175559090" target="_blank" rel="noopener noreferrer" className="hover:text-green-600">0317-5559090</a>
+                      </div>
+                    </div>
+                    <div className="space-y-2 sm:col-span-2">
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <Mail className="h-4 w-4" />
+                        <a href="mailto:choicemenu@gmail.com" className="hover:text-primary">choicemenu@gmail.com</a>
+                      </div>
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <Share2 className="h-4 w-4" />
+                        <a href="https://facebook.com/choicemenu" target="_blank" rel="noopener noreferrer" className="hover:text-blue-600">@choice menu</a>
+                      </div>
+                      <div className="flex items-start gap-2 text-muted-foreground">
+                        <MapPin className="h-4 w-4 mt-0.5" />
+                        <span>Choice Menu Shop No.1, 2 Near Al Karim Bakers Aliabad Hunza</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <div className="flex gap-4 pt-4">
