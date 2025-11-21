@@ -98,6 +98,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const storedUser = localStorage.getItem("user")
     
     // Always re-sync from localStorage on route changes to prevent state loss
+    // This ensures auth state persists across navigation
     if (storedToken && storedUser) {
       try {
         const parsedUser = JSON.parse(storedUser)
@@ -113,11 +114,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setToken(null)
         setUser(null)
       }
-    } else if (!storedToken && !storedUser && (token || user)) {
-      // If localStorage is cleared but state still has values, clear state
-      setToken(null)
-      setUser(null)
     }
+    // IMPORTANT: Don't clear state if localStorage is empty
+    // This prevents clearing auth on navigation to public routes
+    // State will only be cleared on explicit logout or 401 from API
   }, [pathname]) // Only depend on pathname to trigger on route changes
 
   useEffect(() => {
