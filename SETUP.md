@@ -102,7 +102,6 @@ This creates:
   - Role: ADMIN
 
 - **Sample Services:**
-  - Tent Setup
   - Catering Service
   - Sound System
   - Lighting
