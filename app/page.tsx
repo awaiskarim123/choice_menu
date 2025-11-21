@@ -6,10 +6,45 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Logo } from "@/components/logo"
 import { StructuredData } from "@/components/structured-data"
 import { Phone, MessageCircle, Mail, Share2, MapPin, Menu, X } from "lucide-react"
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 
 export default function Home() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const menuRef = useRef<HTMLDivElement>(null)
+  const buttonRef = useRef<HTMLButtonElement>(null)
+
+  // Handle Escape key to close menu
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isMobileMenuOpen) {
+        setIsMobileMenuOpen(false)
+        buttonRef.current?.focus()
+      }
+    }
+
+    if (isMobileMenuOpen) {
+      document.addEventListener("keydown", handleEscape)
+      // Focus first menu item when menu opens
+      const firstLink = menuRef.current?.querySelector("a")
+      firstLink?.focus()
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape)
+    }
+  }, [isMobileMenuOpen])
+
+  // Prevent body scroll when menu is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = "hidden"
+    } else {
+      document.body.style.overflow = ""
+    }
+    return () => {
+      document.body.style.overflow = ""
+    }
+  }, [isMobileMenuOpen])
 
   const organizationSchema = {
     "@context": "https://schema.org",
@@ -65,31 +100,41 @@ export default function Home() {
           </div>
           {/* Mobile Menu Button */}
           <Button
+            ref={buttonRef}
             variant="outline"
             size="icon"
             className="md:hidden"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-expanded={isMobileMenuOpen}
+            aria-label={isMobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+            aria-controls="mobile-menu"
           >
             {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
         </div>
         {/* Mobile Navigation Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden border-t bg-background">
+          <div
+            id="mobile-menu"
+            ref={menuRef}
+            role="menu"
+            aria-label="Navigation menu"
+            className="md:hidden border-t bg-background"
+          >
             <div className="container mx-auto px-4 py-4 flex flex-col gap-2 max-w-7xl">
-              <Link href="/about" onClick={() => setIsMobileMenuOpen(false)}>
+              <Link href="/about" onClick={() => setIsMobileMenuOpen(false)} role="menuitem" tabIndex={0}>
                 <Button variant="ghost" className="w-full justify-start">About</Button>
               </Link>
-              <Link href="/services" onClick={() => setIsMobileMenuOpen(false)}>
+              <Link href="/services" onClick={() => setIsMobileMenuOpen(false)} role="menuitem" tabIndex={0}>
                 <Button variant="ghost" className="w-full justify-start">Services</Button>
               </Link>
-              <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)}>
+              <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)} role="menuitem" tabIndex={0}>
                 <Button variant="ghost" className="w-full justify-start">Contact</Button>
               </Link>
-              <Link href="/book-event" onClick={() => setIsMobileMenuOpen(false)}>
+              <Link href="/book-event" onClick={() => setIsMobileMenuOpen(false)} role="menuitem" tabIndex={0}>
                 <Button className="w-full justify-start">Book Event</Button>
               </Link>
-              <Link href="/auth/login" onClick={() => setIsMobileMenuOpen(false)}>
+              <Link href="/auth/login" onClick={() => setIsMobileMenuOpen(false)} role="menuitem" tabIndex={0}>
                 <Button variant="outline" className="w-full justify-start">Login</Button>
               </Link>
             </div>

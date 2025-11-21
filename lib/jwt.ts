@@ -1,8 +1,16 @@
 import jwt, { SignOptions } from "jsonwebtoken"
 import { UserRole } from "@prisma/client"
 
-const JWT_SECRET: string = process.env.JWT_SECRET || "your-secret-key-change-in-production"
-const JWT_EXPIRES_IN: string = process.env.JWT_EXPIRES_IN || "7d"
+// Fail fast if JWT_SECRET is not configured - security critical
+const JWT_SECRET = process.env.JWT_SECRET
+if (!JWT_SECRET) {
+  throw new Error("JWT_SECRET must be configured in environment variables")
+}
+
+// Use StringValue type for expiresIn (compatible with jsonwebtoken's SignOptions)
+// StringValue accepts formats like "7d", "1h", "30m", etc.
+type StringValue = string & { __brand: "StringValue" }
+const JWT_EXPIRES_IN: StringValue = (process.env.JWT_EXPIRES_IN || "7d") as StringValue
 
 export interface JWTPayload {
   userId: string
@@ -13,9 +21,8 @@ export interface JWTPayload {
 }
 
 export function generateToken(payload: JWTPayload): string {
-  return jwt.sign(payload, JWT_SECRET, {
-    expiresIn: JWT_EXPIRES_IN,
-  } as SignOptions)
+  const signOptions: SignOptions = { expiresIn: JWT_EXPIRES_IN }
+  return jwt.sign(payload, JWT_SECRET, signOptions)
 }
 
 export function verifyToken(token: string): JWTPayload {

@@ -90,7 +90,7 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     fetchEvents()
-  }, [fetchEvents, statusFilter])
+  }, [fetchEvents]) // fetchEvents is memoized with statusFilter, so this is sufficient
 
   const updateEventStatus = async (eventId: string, status: string) => {
     try {
