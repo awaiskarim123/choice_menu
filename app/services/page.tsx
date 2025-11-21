@@ -5,7 +5,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { formatCurrency } from "@/lib/utils"
-import { Logo } from "@/components/logo"
+import { Sidebar } from "@/components/sidebar"
 
 type Service = {
   id: string
@@ -36,27 +36,9 @@ export default function ServicesPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <nav className="border-b bg-card/50 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <Logo href="/" size="md" showText={true} />
-          <div className="flex gap-4">
-            <Link href="/">
-              <Button variant="ghost">Home</Button>
-            </Link>
-            <Link href="/about">
-              <Button variant="ghost">About</Button>
-            </Link>
-            <Link href="/contact">
-              <Button variant="ghost">Contact</Button>
-            </Link>
-            <Link href="/book-event">
-              <Button>Book Event</Button>
-            </Link>
-          </div>
-        </div>
-      </nav>
-
-      <div className="container mx-auto px-4 py-16">
+      <Sidebar />
+      <div className="lg:pl-64 pt-16 lg:pt-0">
+        <div className="container mx-auto px-4 py-16">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold mb-4">Our Services</h1>
           <p className="text-center text-muted-foreground max-w-2xl mx-auto">
@@ -103,12 +85,7 @@ export default function ServicesPage() {
           </Link>
         </div>
       </div>
-
-      <footer className="border-t bg-card/50 backdrop-blur-sm py-8 mt-16">
-        <div className="container mx-auto px-4 text-center text-muted-foreground">
-          <p>&copy; 2024 Choice Menu. All rights reserved.</p>
-        </div>
-      </footer>
+      </div>
     </div>
   )
 }

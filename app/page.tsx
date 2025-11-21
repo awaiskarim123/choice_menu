@@ -8,6 +8,7 @@ import { StructuredData } from "@/components/structured-data"
 import { Phone, MessageCircle, Mail, Share2, MapPin, Menu, X, User, LogOut } from "lucide-react"
 import { useState, useEffect, useRef } from "react"
 import { useAuth } from "@/contexts/auth-context"
+import { Sidebar } from "@/components/sidebar"
 
 export default function Home() {
   const { user, logout } = useAuth()
@@ -84,8 +85,10 @@ export default function Home() {
       <StructuredData data={organizationSchema} />
       <StructuredData data={localBusinessSchema} />
       <div className="min-h-screen overflow-x-hidden">
+      <Sidebar />
+      <div className="lg:pl-64 pt-16 lg:pt-0">
       {/* Navigation */}
-      <nav className="border-b bg-background sticky top-0 z-50">
+      <nav className="border-b bg-background sticky top-0 z-50 hidden lg:block">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center max-w-7xl">
           <Logo href="/" size="md" showText={true} />
           {/* Desktop Navigation */}
@@ -200,7 +203,7 @@ export default function Home() {
           Your Trusted Event Management Partner
         </h1>
         <p className="text-lg sm:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto px-4">
-          From tent setup to catering, we handle every detail of your special event
+          From catering to event planning, we handle every detail of your special event
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center px-4">
           <Link href="/book-event" className="w-full sm:w-auto">
@@ -216,12 +219,6 @@ export default function Home() {
       <section className="container mx-auto px-4 py-16 max-w-7xl">
         <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-12">Our Services</h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Tent Setup</CardTitle>
-              <CardDescription>Professional tent installation for any event size</CardDescription>
-            </CardHeader>
-          </Card>
           <Card>
             <CardHeader>
               <CardTitle>Catering</CardTitle>
@@ -367,6 +364,7 @@ export default function Home() {
           <p className="text-sm sm:text-base">&copy; 2024 Choice Menu. All rights reserved.</p>
         </div>
       </footer>
+      </div>
       </div>
     </>
   )

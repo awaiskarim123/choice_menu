@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     default: "Choice Menu - Event Management & Catering Services",
     template: "%s | Choice Menu"
   },
-  description: "Professional event management and catering services. Book your perfect event with tent setup, catering, and comprehensive event planning services in Pakistan.",
+  description: "Professional event management and catering services. Book your perfect event with catering and comprehensive event planning services in Pakistan.",
   keywords: ["event management", "catering services", "tent service", "event planning", "wedding catering", "corporate events", "Pakistan"],
   authors: [{ name: "Choice Menu" }],
   creator: "Choice Menu",
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     url: "/",
     siteName: "Choice Menu",
     title: "Choice Menu - Event Management & Catering Services",
-    description: "Professional event management and catering services. Book your perfect event with tent setup, catering, and comprehensive event planning services.",
+    description: "Professional event management and catering services. Book your perfect event with catering and comprehensive event planning services.",
     images: [
       {
         url: "/og-image.jpg",
@@ -42,7 +42,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Choice Menu - Event Management & Catering Services",
-    description: "Professional event management and catering services. Book your perfect event with tent setup, catering, and comprehensive event planning services.",
+    description: "Professional event management and catering services. Book your perfect event with catering and comprehensive event planning services.",
     images: ["/og-image.jpg"],
   },
   robots: {

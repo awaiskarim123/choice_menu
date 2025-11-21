@@ -24,8 +24,8 @@ async function main() {
   // Create sample services
   const services = [
     {
-      name: 'Tent Setup',
-      description: 'Professional tent installation for any event size',
+      name: 'Tent Service',
+      description: 'Tent structure with sidewalls, basic flooring, and setup',
       price: 50000,
       isActive: true,
     },
@@ -57,6 +57,30 @@ async function main() {
       name: 'Event Planning',
       description: 'Complete event coordination and management',
       price: 60000,
+      isActive: true,
+    },
+    {
+      name: 'Food',
+      description: 'Delicious food preparation and serving',
+      price: 70000,
+      isActive: true,
+    },
+    {
+      name: 'Chef',
+      description: 'Professional chef services for event cooking',
+      price: 45000,
+      isActive: true,
+    },
+    {
+      name: 'Dish Washing',
+      description: 'Complete dish washing and cleaning service',
+      price: 15000,
+      isActive: true,
+    },
+    {
+      name: 'Transport',
+      description: 'Transportation services for equipment and staff',
+      price: 35000,
       isActive: true,
     },
   ]

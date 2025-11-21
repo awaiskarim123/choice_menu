@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useAuth } from "@/contexts/auth-context"
@@ -29,6 +29,12 @@ export function Sidebar({ className }: SidebarProps) {
   const pathname = usePathname()
   const { user, logout } = useAuth()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  // Prevent hydration mismatch by only rendering user-dependent UI after mount
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const isAdmin = user?.role === "ADMIN"
 
@@ -139,23 +145,27 @@ export function Sidebar({ className }: SidebarProps) {
                 <Users className="h-5 w-5" />
               </div>
               <div className="flex flex-col flex-1 min-w-0">
-                <span className="text-sm font-semibold truncate">{user?.name}</span>
+                <span className="text-sm font-semibold truncate">
+                  {mounted ? (user?.name || "Guest") : "Guest"}
+                </span>
                 <span className="text-xs text-muted-foreground">
-                  {isAdmin ? "Administrator" : "Customer"}
+                  {mounted ? (isAdmin ? "Administrator" : "Customer") : "Loading..."}
                 </span>
               </div>
             </div>
             <div className="flex items-center gap-2">
               <ThemeToggle />
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={logout}
-                className="flex-1 border-destructive/20 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/40"
-              >
-                <LogOut className="mr-2 h-4 w-4" />
-                Logout
-              </Button>
+              {mounted && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={logout}
+                  className="flex-1 border-destructive/20 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/40"
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Logout
+                </Button>
+              )}
             </div>
           </div>
         </div>

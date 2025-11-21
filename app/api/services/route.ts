@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
     const services = await prisma.service.findMany({
       where,
       orderBy: {
-        createdAt: "desc",
+        createdAt: "asc",
       },
     })
 

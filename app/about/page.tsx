@@ -1,32 +1,14 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Logo } from "@/components/logo"
+import { Sidebar } from "@/components/sidebar"
 
 export default function AboutPage() {
   return (
     <div className="min-h-screen">
-      <nav className="border-b">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <Logo href="/" size="md" showText={true} />
-          <div className="flex gap-4">
-            <Link href="/">
-              <Button variant="ghost">Home</Button>
-            </Link>
-            <Link href="/services">
-              <Button variant="ghost">Services</Button>
-            </Link>
-            <Link href="/contact">
-              <Button variant="ghost">Contact</Button>
-            </Link>
-            <Link href="/book-event">
-              <Button>Book Event</Button>
-            </Link>
-          </div>
-        </div>
-      </nav>
-
-      <div className="container mx-auto px-4 py-16">
+      <Sidebar />
+      <div className="lg:pl-64 pt-16 lg:pt-0">
+        <div className="container mx-auto px-4 py-16">
         <div className="max-w-3xl mx-auto">
           <h1 className="text-4xl font-bold mb-6">About Choice Menu</h1>
           <div className="prose prose-lg max-w-none space-y-6">
@@ -46,7 +28,6 @@ export default function AboutPage() {
             <h2 className="text-2xl font-semibold mt-8">What We Offer</h2>
             <ul className="list-disc list-inside space-y-2">
               <li>Complete event planning and coordination</li>
-              <li>Professional tent setup and installation</li>
               <li>Premium catering services</li>
               <li>High-quality sound systems and audio equipment</li>
               <li>Professional lighting solutions</li>
@@ -98,12 +79,7 @@ export default function AboutPage() {
           </div>
         </div>
       </div>
-
-      <footer className="border-t py-8 mt-16">
-        <div className="container mx-auto px-4 text-center text-muted-foreground">
-          <p>&copy; 2024 Choice Menu. All rights reserved.</p>
-        </div>
-      </footer>
+      </div>
     </div>
   )
 }
