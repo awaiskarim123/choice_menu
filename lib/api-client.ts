@@ -27,6 +27,12 @@ export async function fetchWithAuth(url: string, options: RequestInit = {}) {
     }
   }
 
+  // Handle 403 Forbidden errors - user doesn't have permission
+  // Don't clear auth for 403, just return the response so the component can handle it
+  if (response.status === 403) {
+    // The component will handle showing appropriate error message
+  }
+
   return response
 }
 

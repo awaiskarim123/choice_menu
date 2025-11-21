@@ -92,6 +92,15 @@ export default function EventsPage() {
           router.push("/auth/login")
           return
         }
+        if (response.status === 403) {
+          toast({
+            title: "Access Denied",
+            description: "You don't have permission to access this resource.",
+            variant: "destructive",
+          })
+          router.push("/dashboard")
+          return
+        }
         throw new Error("Failed to fetch events")
       }
 
@@ -199,6 +208,14 @@ export default function EventsPage() {
       if (!response.ok) {
         if (response.status === 401) {
           router.push("/auth/login")
+          return
+        }
+        if (response.status === 403) {
+          toast({
+            title: "Access Denied",
+            description: "You don't have permission to update this event. Only admins and event owners can update events.",
+            variant: "destructive",
+          })
           return
         }
         throw new Error(result.error || "Failed to update status")
@@ -361,43 +378,50 @@ export default function EventsPage() {
                             </div>
                           </td>
                           <td className="p-4">
-                            <div className="relative">
-                              <button
-                                onClick={() => setOpenMenuId(openMenuId === event.id ? null : event.id)}
-                                className="p-1 hover:bg-gray-200 rounded cursor-pointer"
-                              >
-                                <MoreVertical className="w-5 h-5 text-muted-foreground" />
-                              </button>
-                              {openMenuId === event.id && (
-                                <>
-                                  <div
-                                    className="fixed inset-0 z-10"
-                                    onClick={() => setOpenMenuId(null)}
-                                  />
-                                  <div className="absolute right-0 mt-2 w-48 bg-card border border-border rounded-md shadow-lg z-20">
-                                    <div className="py-1">
-                                      {event.status !== "CONFIRMED" && (
-                                        <button
-                                          onClick={() => updateEventStatus(event.id, "CONFIRMED")}
-                                          className="w-full text-left px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground flex items-center gap-2 text-foreground"
-                                        >
-                                          <CheckCircle2 className="w-4 h-4 text-green-600" />
-                                          Mark as Confirmed
-                                        </button>
-                                      )}
-                                      {event.status !== "COMPLETED" && (
-                                        <button
-                                          onClick={() => updateEventStatus(event.id, "COMPLETED")}
-                                          className="w-full text-left px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground flex items-center gap-2 text-foreground"
-                                        >
-                                          <CheckCircle2 className="w-4 h-4 text-blue-600" />
-                                          Mark as Completed
-                                        </button>
-                                      )}
+                            <div className="flex items-center gap-2">
+                              <Link href={`/dashboard/events/${event.id}?from=/events`}>
+                                <Button variant="outline" size="sm">
+                                  View
+                                </Button>
+                              </Link>
+                              <div className="relative">
+                                <button
+                                  onClick={() => setOpenMenuId(openMenuId === event.id ? null : event.id)}
+                                  className="p-1 hover:bg-gray-200 rounded cursor-pointer"
+                                >
+                                  <MoreVertical className="w-5 h-5 text-muted-foreground" />
+                                </button>
+                                {openMenuId === event.id && (
+                                  <>
+                                    <div
+                                      className="fixed inset-0 z-10"
+                                      onClick={() => setOpenMenuId(null)}
+                                    />
+                                    <div className="absolute right-0 mt-2 w-48 bg-card border border-border rounded-md shadow-lg z-20">
+                                      <div className="py-1">
+                                        {event.status !== "CONFIRMED" && (
+                                          <button
+                                            onClick={() => updateEventStatus(event.id, "CONFIRMED")}
+                                            className="w-full text-left px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground flex items-center gap-2 text-foreground"
+                                          >
+                                            <CheckCircle2 className="w-4 h-4 text-green-600" />
+                                            Mark as Confirmed
+                                          </button>
+                                        )}
+                                        {event.status !== "COMPLETED" && (
+                                          <button
+                                            onClick={() => updateEventStatus(event.id, "COMPLETED")}
+                                            className="w-full text-left px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground flex items-center gap-2 text-foreground"
+                                          >
+                                            <CheckCircle2 className="w-4 h-4 text-blue-600" />
+                                            Mark as Completed
+                                          </button>
+                                        )}
+                                      </div>
                                     </div>
-                                  </div>
-                                </>
-                              )}
+                                  </>
+                                )}
+                              </div>
                             </div>
                           </td>
                         </tr>

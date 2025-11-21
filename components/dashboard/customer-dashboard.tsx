@@ -40,6 +40,17 @@ export default function CustomerDashboard() {
   const fetchEvents = async () => {
     try {
       const response = await fetchWithAuth("/api/events")
+      if (!response.ok) {
+        if (response.status === 403) {
+          toast({
+            title: "Access Denied",
+            description: "You don't have permission to access this resource.",
+            variant: "destructive",
+          })
+          return
+        }
+        throw new Error("Failed to fetch events")
+      }
       const data = await response.json()
       setEvents(data.events || [])
     } catch (error) {
@@ -261,7 +272,7 @@ export default function CustomerDashboard() {
                         ))}
                       </div>
                     </div>
-                    <Link href={`/dashboard/events/${event.id}`}>
+                    <Link href={`/dashboard/events/${event.id}?from=/dashboard`}>
                       <Button variant="outline" className="w-full">
                         View Details
                       </Button>

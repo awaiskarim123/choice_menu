@@ -5,10 +5,12 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Logo } from "@/components/logo"
 import { StructuredData } from "@/components/structured-data"
-import { Phone, MessageCircle, Mail, Share2, MapPin, Menu, X } from "lucide-react"
+import { Phone, MessageCircle, Mail, Share2, MapPin, Menu, X, User, LogOut } from "lucide-react"
 import { useState, useEffect, useRef } from "react"
+import { useAuth } from "@/contexts/auth-context"
 
 export default function Home() {
+  const { user, logout } = useAuth()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
@@ -94,9 +96,29 @@ export default function Home() {
             <Link href="/book-event">
               <Button className="text-sm lg:text-base">Book Event</Button>
             </Link>
-            <Link href="/auth/login">
-              <Button variant="outline" className="text-sm lg:text-base">Login</Button>
-            </Link>
+            {user ? (
+              <div className="flex items-center gap-2">
+                <Link href="/dashboard">
+                  <Button variant="outline" className="text-sm lg:text-base flex items-center gap-2">
+                    <User className="h-4 w-4" />
+                    {user.name}
+                  </Button>
+                </Link>
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  onClick={logout}
+                  className="text-sm lg:text-base"
+                  title="Logout"
+                >
+                  <LogOut className="h-4 w-4" />
+                </Button>
+              </div>
+            ) : (
+              <Link href="/auth/login">
+                <Button variant="outline" className="text-sm lg:text-base">Login</Button>
+              </Link>
+            )}
           </div>
           {/* Mobile Menu Button */}
           <Button
@@ -134,9 +156,33 @@ export default function Home() {
               <Link href="/book-event" onClick={() => setIsMobileMenuOpen(false)} role="menuitem" tabIndex={0}>
                 <Button className="w-full justify-start">Book Event</Button>
               </Link>
-              <Link href="/auth/login" onClick={() => setIsMobileMenuOpen(false)} role="menuitem" tabIndex={0}>
-                <Button variant="outline" className="w-full justify-start">Login</Button>
-              </Link>
+              {user ? (
+                <>
+                  <Link href="/dashboard" onClick={() => setIsMobileMenuOpen(false)} role="menuitem" tabIndex={0}>
+                    <Button variant="outline" className="w-full justify-start">
+                      <User className="mr-2 h-4 w-4" />
+                      {user.name}
+                    </Button>
+                  </Link>
+                  <Button 
+                    variant="outline" 
+                    className="w-full justify-start"
+                    onClick={() => {
+                      logout()
+                      setIsMobileMenuOpen(false)
+                    }}
+                    role="menuitem"
+                    tabIndex={0}
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Logout
+                  </Button>
+                </>
+              ) : (
+                <Link href="/auth/login" onClick={() => setIsMobileMenuOpen(false)} role="menuitem" tabIndex={0}>
+                  <Button variant="outline" className="w-full justify-start">Login</Button>
+                </Link>
+              )}
             </div>
           </div>
         )}

@@ -66,6 +66,17 @@ export default function AdminDashboard() {
   const fetchStats = async () => {
     try {
       const response = await fetchWithAuth("/api/dashboard/stats")
+      if (!response.ok) {
+        if (response.status === 403) {
+          toast({
+            title: "Access Denied",
+            description: "Only administrators can access dashboard statistics.",
+            variant: "destructive",
+          })
+          return
+        }
+        throw new Error("Failed to fetch stats")
+      }
       const data = await response.json()
       setStats(data.stats)
     } catch (error) {
@@ -79,6 +90,17 @@ export default function AdminDashboard() {
       if (statusFilter) url.searchParams.set("status", statusFilter)
 
       const response = await fetchWithAuth(url.toString())
+      if (!response.ok) {
+        if (response.status === 403) {
+          toast({
+            title: "Access Denied",
+            description: "You don't have permission to access this resource.",
+            variant: "destructive",
+          })
+          return
+        }
+        throw new Error("Failed to fetch events")
+      }
       const data = await response.json()
       setEvents(data.events || [])
     } catch (error) {
@@ -86,7 +108,7 @@ export default function AdminDashboard() {
     } finally {
       setLoading(false)
     }
-  }, [statusFilter])
+  }, [statusFilter, toast])
 
   useEffect(() => {
     fetchEvents()
@@ -101,6 +123,14 @@ export default function AdminDashboard() {
       })
 
       if (!response.ok) {
+        if (response.status === 403) {
+          toast({
+            title: "Access Denied",
+            description: "You don't have permission to update this event.",
+            variant: "destructive",
+          })
+          return
+        }
         throw new Error("Failed to update status")
       }
 
@@ -255,7 +285,7 @@ export default function AdminDashboard() {
                         )}
                       </p>
                     </div>
-                    <Link href={`/dashboard/events/${event.id}`}>
+                    <Link href={`/dashboard/events/${event.id}?from=/dashboard`}>
                       <Button variant="outline" className="rounded-lg">View Details</Button>
                     </Link>
                   </div>

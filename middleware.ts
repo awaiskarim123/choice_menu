@@ -24,7 +24,8 @@ export function middleware(request: NextRequest) {
   // For protected routes, check if user is authenticated
   if (request.nextUrl.pathname.startsWith("/dashboard") || 
       request.nextUrl.pathname.startsWith("/admin") ||
-      request.nextUrl.pathname.startsWith("/book-event")) {
+      request.nextUrl.pathname.startsWith("/book-event") ||
+      request.nextUrl.pathname.startsWith("/events")) {
     
     // For API routes, verify token
     if (request.nextUrl.pathname.startsWith("/api")) {
@@ -53,6 +54,7 @@ export const config = {
     "/dashboard/:path*",
     "/admin/:path*",
     "/book-event",
+    "/events",
     "/api/:path*",
   ],
 }

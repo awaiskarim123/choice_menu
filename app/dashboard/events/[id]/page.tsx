@@ -2,23 +2,29 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { useAuth } from "@/contexts/auth-context"
-import { useRouter, useParams } from "next/navigation"
+import { useRouter, useParams, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { useToast } from "@/components/ui/use-toast"
 import { formatDate, formatCurrency, formatDateTime } from "@/lib/utils"
 import { fetchWithAuth } from "@/lib/api-client"
+import { Sidebar } from "@/components/sidebar"
 import { ArrowLeft } from "lucide-react"
 
 type Event = {
   id: string
   eventName: string
   eventType: string
-  eventDate: string
-  eventTime: string
+  eventStartDate: string
+  eventStartTime: string
+  eventEndDate: string | null
+  eventEndTime: string | null
   venue: string
+  customerAddress: string | null
   guestCount: number
+  foodIncluded: boolean
+  numberOfPeopleServed: number | null
   budget: number
   specialRequests: string | null
   status: string
@@ -26,6 +32,7 @@ type Event = {
   contactPhone: string
   contactEmail: string | null
   customer: {
+    id: string
     name: string
     phone: string
     email: string | null
@@ -35,8 +42,10 @@ type Event = {
     quantity: number
     price: number
     service: {
+      id: string
       name: string
       description: string | null
+      price: number
     }
   }>
   payments: Array<{
@@ -58,12 +67,16 @@ type Event = {
 }
 
 export default function EventDetailPage() {
-  const { user } = useAuth()
+  const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const params = useParams()
+  const searchParams = useSearchParams()
   const { toast } = useToast()
   const [event, setEvent] = useState<Event | null>(null)
   const [loading, setLoading] = useState(true)
+
+  // Determine where to go back to
+  const backPath = searchParams.get("from") || "/events"
 
   const fetchEvent = useCallback(async () => {
     try {
@@ -71,6 +84,15 @@ export default function EventDetailPage() {
       const data = await response.json()
 
       if (!response.ok) {
+        if (response.status === 403) {
+          toast({
+            title: "Access Denied",
+            description: "You don't have permission to view this event. You can only view your own events.",
+            variant: "destructive",
+          })
+          router.push(backPath)
+          return
+        }
         throw new Error(data.error || "Failed to fetch event")
       }
 
@@ -81,11 +103,11 @@ export default function EventDetailPage() {
         description: error.message || "Failed to load event",
         variant: "destructive",
       })
-      router.push("/dashboard")
+      router.push(backPath)
     } finally {
       setLoading(false)
     }
-  }, [params.id, toast, router])
+  }, [params.id, toast, router, backPath])
 
   useEffect(() => {
     if (params.id) {
@@ -108,83 +130,128 @@ export default function EventDetailPage() {
     }
   }
 
-  if (loading) {
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push("/auth/login")
+    }
+  }, [user, authLoading, router])
+
+  if (authLoading || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">Loading...</div>
+      <div className="min-h-screen bg-background">
+        <Sidebar />
+        <div className="lg:pl-64">
+          <div className="min-h-screen flex items-center justify-center">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+              <p className="text-muted-foreground">Loading event...</p>
+            </div>
+          </div>
+        </div>
+      </div>
     )
   }
 
-  if (!event) {
+  if (!user) {
     return null
   }
 
-  const totalAmount = event.payments.reduce((sum, p) => sum + p.amount, 0)
+  if (!event) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Sidebar />
+        <div className="lg:pl-64">
+          <div className="min-h-screen flex items-center justify-center">
+            <div className="text-center">
+              <p className="text-muted-foreground text-lg">Event not found</p>
+              <Link href={backPath} className="mt-4 inline-block">
+                <Button>Go Back</Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  const totalAmount = event.eventServices.reduce((sum, es) => sum + es.price * es.quantity, 0)
+  const totalPayments = event.payments.reduce((sum, p) => sum + p.amount, 0)
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b">
-        <div className="container mx-auto px-4 py-4">
-          <Link href="/dashboard">
-            <Button variant="ghost" className="mb-4">
+    <div className="min-h-screen bg-background">
+      <Sidebar />
+      <div className="lg:pl-64 pt-16 lg:pt-0">
+        <div className="container mx-auto px-4 py-8">
+          <Link href={backPath}>
+            <Button variant="ghost" className="mb-6">
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Dashboard
+              Back
             </Button>
           </Link>
-        </div>
-      </header>
 
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto space-y-6">
-          {/* Event Header */}
-          <Card>
-            <CardHeader>
-              <div className="flex justify-between items-start">
-                <div>
-                  <CardTitle className="text-3xl">{event.eventName}</CardTitle>
-                  <CardDescription>
-                    {event.eventType} • {formatDate(event.eventDate)} at {event.eventTime}
-                  </CardDescription>
+          <div className="max-w-4xl mx-auto space-y-6">
+            {/* Event Header */}
+            <Card>
+              <CardHeader>
+                <div className="flex justify-between items-start">
+                  <div>
+                    <CardTitle className="text-3xl">{event.eventName}</CardTitle>
+                    <CardDescription>
+                      {event.eventType} • {formatDate(event.eventStartDate)} at {event.eventStartTime}
+                      {event.eventEndDate && (
+                        <> • Ends: {formatDate(event.eventEndDate)}{event.eventEndTime && ` at ${event.eventEndTime}`}</>
+                      )}
+                    </CardDescription>
+                  </div>
+                  <span
+                    className={`px-4 py-2 rounded-full text-sm font-medium ${getStatusColor(
+                      event.status
+                    )}`}
+                  >
+                    {event.status}
+                  </span>
                 </div>
-                <span
-                  className={`px-4 py-2 rounded-full text-sm font-medium ${getStatusColor(
-                    event.status
-                  )}`}
-                >
-                  {event.status}
-                </span>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm text-muted-foreground">Venue</p>
-                  <p className="font-medium">{event.venue}</p>
+              </CardHeader>
+              <CardContent>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Venue</p>
+                    <p className="font-medium">{event.venue}</p>
+                    {event.customerAddress && (
+                      <p className="text-sm text-muted-foreground mt-1">{event.customerAddress}</p>
+                    )}
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Guest Count</p>
+                    <p className="font-medium">{event.guestCount} guests</p>
+                    {event.foodIncluded && (
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Food included {event.numberOfPeopleServed && `(${event.numberOfPeopleServed} people)`}
+                      </p>
+                    )}
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Budget</p>
+                    <p className="font-medium">{formatCurrency(event.budget)}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Contact</p>
+                    <p className="font-medium">{event.contactName}</p>
+                    <p className="text-sm text-muted-foreground">{event.contactPhone}</p>
+                    {event.contactEmail && (
+                      <p className="text-sm text-muted-foreground">{event.contactEmail}</p>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Guest Count</p>
-                  <p className="font-medium">{event.guestCount} guests</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Budget</p>
-                  <p className="font-medium">{formatCurrency(event.budget)}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Contact</p>
-                  <p className="font-medium">{event.contactName}</p>
-                  <p className="text-sm text-muted-foreground">{event.contactPhone}</p>
-                  {event.contactEmail && (
-                    <p className="text-sm text-muted-foreground">{event.contactEmail}</p>
-                  )}
-                </div>
-              </div>
-              {event.specialRequests && (
-                <div className="mt-4">
-                  <p className="text-sm text-muted-foreground">Special Requests</p>
-                  <p className="mt-1">{event.specialRequests}</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+                {event.specialRequests && (
+                  <div className="mt-4">
+                    <p className="text-sm text-muted-foreground">Special Requests</p>
+                    <p className="mt-1">{event.specialRequests}</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
 
           {/* Services */}
           <Card>
@@ -213,7 +280,7 @@ export default function EventDetailPage() {
                   </div>
                 ))}
                 <div className="flex justify-between items-center pt-4 border-t">
-                  <p className="text-lg font-semibold">Total</p>
+                  <p className="text-lg font-semibold">Total Services</p>
                   <p className="text-xl font-bold">{formatCurrency(totalAmount)}</p>
                 </div>
               </div>
@@ -317,6 +384,7 @@ export default function EventDetailPage() {
               </CardContent>
             </Card>
           )}
+          </div>
         </div>
       </div>
     </div>
