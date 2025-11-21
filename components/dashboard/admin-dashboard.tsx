@@ -86,7 +86,7 @@ export default function AdminDashboard() {
     } finally {
       setLoading(false)
     }
-  })
+  }, [statusFilter])
 
   useEffect(() => {
     fetchEvents()

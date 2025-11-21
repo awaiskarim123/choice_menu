@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useAuth } from "@/contexts/auth-context"
 import { useRouter, useParams } from "next/navigation"
 import Link from "next/link"
@@ -65,13 +65,7 @@ export default function EventDetailPage() {
   const [event, setEvent] = useState<Event | null>(null)
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    if (params.id) {
-      fetchEvent()
-    }
-  }, [params.id])
-
-  const fetchEvent = async () => {
+  const fetchEvent = useCallback(async () => {
     try {
       const response = await fetchWithAuth(`/api/events/${params.id}`)
       const data = await response.json()
@@ -91,7 +85,13 @@ export default function EventDetailPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [params.id, toast, router])
+
+  useEffect(() => {
+    if (params.id) {
+      fetchEvent()
+    }
+  }, [params.id, fetchEvent])
 
   const getStatusColor = (status: string) => {
     switch (status) {

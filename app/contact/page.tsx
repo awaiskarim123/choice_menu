@@ -60,14 +60,14 @@ export default function ContactPage() {
         <div className="max-w-2xl mx-auto">
           <h1 className="text-4xl font-bold mb-6 text-center">Contact Us</h1>
           <p className="text-center text-muted-foreground mb-12">
-            Have questions? We'd love to hear from you. Send us a message and we'll respond as soon
+            Have questions? We&apos;d love to hear from you. Send us a message and we&apos;ll respond as soon
             as possible.
           </p>
 
           <Card>
             <CardHeader>
               <CardTitle>Get in Touch</CardTitle>
-              <CardDescription>Fill out the form below and we'll get back to you</CardDescription>
+              <CardDescription>Fill out the form below and we&apos;ll get back to you</CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
