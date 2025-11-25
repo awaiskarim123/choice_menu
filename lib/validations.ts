@@ -12,7 +12,12 @@ export const registerSchema = z.object({
   email: z.string().email("Invalid email address").optional().or(z.literal("")),
   phone: z.string().min(10, "Phone number must be at least 10 digits"),
   password: z.string().min(6, "Password must be at least 6 characters"),
-  cnic: z.string().optional(),
+  cnic: z.string()
+    .optional()
+    .refine(
+      (val) => !val || /^\d{5}-\d{7}-\d{1}$/.test(val),
+      "CNIC must be in format XXXXX-XXXXXXX-X (13 digits)"
+    ),
   role: z.enum(["ADMIN", "CUSTOMER"]).default("CUSTOMER"),
 })
 
