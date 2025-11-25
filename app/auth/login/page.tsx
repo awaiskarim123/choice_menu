@@ -9,7 +9,6 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { useToast } from "@/components/ui/use-toast"
 import { useAuth } from "@/contexts/auth-context"
-import { Sidebar } from "@/components/sidebar"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -58,11 +57,8 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <Sidebar />
-      <div className="lg:pl-64 pt-16 lg:pt-0">
-        <div className="min-h-screen flex items-center justify-center px-4 py-8">
-          <Card className="w-full max-w-md border-2 shadow-lg">
+    <div className="min-h-screen bg-background flex items-center justify-center px-4 py-8">
+      <Card className="w-full max-w-md border-2 shadow-lg">
             <CardHeader>
               <CardTitle>Login</CardTitle>
               <CardDescription>Enter your credentials to access your account</CardDescription>
@@ -99,11 +95,9 @@ export default function LoginPage() {
                 <Link href="/auth/register" className="text-primary hover:underline">
                   Register
                 </Link>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   )
 }
