@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { useToast } from "@/components/ui/use-toast"
+import { Sidebar } from "@/components/sidebar"
 import type { Role } from "@/lib/validations"
 
 export default function RegisterPage() {
@@ -57,13 +58,16 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle>Register</CardTitle>
-          <CardDescription>Create a new account to book events</CardDescription>
-        </CardHeader>
-        <CardContent>
+    <div className="min-h-screen bg-background">
+      <Sidebar />
+      <div className="lg:pl-64 pt-16 lg:pt-0">
+        <div className="min-h-screen flex items-center justify-center px-4 py-8">
+          <Card className="w-full max-w-md border-2 shadow-lg">
+            <CardHeader>
+              <CardTitle>Register</CardTitle>
+              <CardDescription>Create a new account to book events</CardDescription>
+            </CardHeader>
+            <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="name">Full Name</Label>
@@ -146,6 +150,8 @@ export default function RegisterPage() {
           </div>
         </CardContent>
       </Card>
+        </div>
+      </div>
     </div>
   )
 }
