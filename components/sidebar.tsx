@@ -55,7 +55,7 @@ export function Sidebar({ className }: SidebarProps) {
       name: "Book Event",
       href: "/book-event",
       icon: BookOpen,
-      show: true,
+      show: mounted && !!user, // Only show if user is logged in
     },
     {
       name: "Services",

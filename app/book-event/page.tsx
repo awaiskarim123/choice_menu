@@ -251,11 +251,27 @@ export default function BookEventPage() {
         id !== "temp-tent-service"
       )
 
+      // Ensure user is authenticated before submitting
+      if (!user) {
+        toast({
+          title: "Error",
+          description: "You must be logged in to book an event. Please log in and try again.",
+          variant: "destructive",
+        })
+        router.push("/auth/login?redirect=/book-event")
+        return
+      }
+
+      const token = localStorage.getItem("token")
       const response = await fetch("/api/events", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          ...(token && { Authorization: `Bearer ${token}` }),
+        },
         body: JSON.stringify({
           ...data,
+          customerId: user.id,
           serviceIds: validServiceIds.length > 0 ? validServiceIds : serviceIds,
           serviceQuantities,
           tentServiceAmount: tentServiceAmount > 0 ? tentServiceAmount : undefined,
@@ -296,7 +312,24 @@ export default function BookEventPage() {
   }
 
   if (!user) {
-    return null
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center">
+          <Card className="max-w-md mx-auto">
+            <CardHeader>
+              <CardTitle>Authentication Required</CardTitle>
+              <CardDescription>You must be logged in to book an event</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-muted-foreground">Redirecting to login page...</p>
+              <Link href="/auth/login?redirect=/book-event">
+                <Button className="w-full">Go to Login</Button>
+              </Link>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    )
   }
 
   const firstPayment = totalAmount * 0.2

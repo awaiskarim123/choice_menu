@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { formatCurrency } from "@/lib/utils"
 import { Sidebar } from "@/components/sidebar"
+import { useAuth } from "@/contexts/auth-context"
 
 type Service = {
   id: string
@@ -15,8 +16,14 @@ type Service = {
 }
 
 export default function ServicesPage() {
+  const { user } = useAuth()
   const [services, setServices] = useState<Service[]>([])
   const [loading, setLoading] = useState(true)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   useEffect(() => {
     fetchServices()
@@ -69,9 +76,11 @@ export default function ServicesPage() {
                 <CardContent>
                   <div className="flex justify-between items-center">
                     <span className="text-2xl font-bold text-primary">{formatCurrency(service.price)}</span>
-                    <Link href="/book-event">
-                      <Button className="rounded-lg">Book Now</Button>
-                    </Link>
+                    {mounted && user && (
+                      <Link href="/book-event">
+                        <Button className="rounded-lg">Book Now</Button>
+                      </Link>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -79,11 +88,13 @@ export default function ServicesPage() {
           </div>
         )}
 
-        <div className="mt-12 text-center">
-          <Link href="/book-event">
-            <Button size="lg" className="rounded-lg">Book Your Event</Button>
-          </Link>
-        </div>
+        {mounted && user && (
+          <div className="mt-12 text-center">
+            <Link href="/book-event">
+              <Button size="lg" className="rounded-lg">Book Your Event</Button>
+            </Link>
+          </div>
+        )}
       </div>
         </div>
     </div>

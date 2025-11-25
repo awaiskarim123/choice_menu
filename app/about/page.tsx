@@ -1,9 +1,19 @@
+"use client"
+
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Sidebar } from "@/components/sidebar"
+import { useAuth } from "@/contexts/auth-context"
 
 export default function AboutPage() {
+  const { user } = useAuth()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
   return (
     <div className="min-h-screen">
       <Sidebar />
@@ -72,11 +82,13 @@ export default function AboutPage() {
             </div>
           </div>
 
-          <div className="mt-12 text-center">
-            <Link href="/book-event">
-              <Button size="lg">Book Your Event Today</Button>
-            </Link>
-          </div>
+          {mounted && user && (
+            <div className="mt-12 text-center">
+              <Link href="/book-event">
+                <Button size="lg">Book Your Event Today</Button>
+              </Link>
+            </div>
+          )}
         </div>
       </div>
         </div>
