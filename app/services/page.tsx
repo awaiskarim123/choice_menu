@@ -68,7 +68,7 @@ export default function ServicesPage() {
         ) : (
           <div className="grid md:grid-cols-3 gap-6">
             {services.map((service) => (
-              <Card key={service.id} className="border-2 hover:border-primary/50 transition-all shadow-sm hover:shadow-md">
+              <Card key={service.id} className="border-2 hover:border-primary/50 transition-all shadow-sm hover:shadow-md cursor-pointer">
                 <CardHeader>
                   <CardTitle className="text-xl">{service.name}</CardTitle>
                   <CardDescription className="text-base">{service.description || "Premium service"}</CardDescription>
