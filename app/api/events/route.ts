@@ -99,8 +99,25 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    // Skip validation for now - use body directly
-    const validatedData = body as any
+    
+    // Validate request body against schema
+    const validationResult = eventBookingSchema.safeParse(body)
+    
+    if (!validationResult.success) {
+      console.error("Event booking validation failed:", validationResult.error.errors)
+      return NextResponse.json(
+        { 
+          error: "Validation error", 
+          details: validationResult.error.errors.map(err => ({
+            path: err.path.join('.'),
+            message: err.message,
+          }))
+        },
+        { status: 400 }
+      )
+    }
+    
+    const validatedData = validationResult.data
     
     // Get customerId from authenticated user or body
     // Frontend sends customerId, but we use authenticated user's ID for security
@@ -119,10 +136,13 @@ export async function POST(request: NextRequest) {
       id.trim() !== ""
     )
 
-    // Handle tent service amount if provided
+    // Handle tent service amount if provided (not in schema, so check body directly)
     let tentServiceAmount = 0
-    if (body.tentServiceAmount && typeof body.tentServiceAmount === "number" && body.tentServiceAmount > 0) {
-      tentServiceAmount = body.tentServiceAmount
+    if (body && typeof body === 'object' && 'tentServiceAmount' in body) {
+      const tentAmount = body.tentServiceAmount
+      if (typeof tentAmount === "number" && tentAmount > 0) {
+        tentServiceAmount = tentAmount
+      }
     }
 
     // Find or get tent service
@@ -183,10 +203,16 @@ export async function POST(request: NextRequest) {
     }
 
     // Calculate total amount from serviceQuantities if provided, otherwise use service prices
+    // serviceQuantities is not in schema, so check body directly with type safety
+    const serviceQuantities = (body && typeof body === 'object' && 'serviceQuantities' in body && 
+      typeof body.serviceQuantities === 'object' && body.serviceQuantities !== null) 
+      ? body.serviceQuantities as Record<string, { quantity: number; price: number }>
+      : undefined
+    
     let totalAmount = validServiceIds.reduce((sum: number, serviceId: string) => {
-      const serviceData = body.serviceQuantities?.[serviceId]
-      if (serviceData) {
-        return sum + serviceData.price * serviceData.quantity
+      const serviceData = serviceQuantities?.[serviceId]
+      if (serviceData && typeof serviceData === 'object' && 'price' in serviceData && 'quantity' in serviceData) {
+        return sum + (serviceData.price || 0) * (serviceData.quantity || 1)
       }
       // Fallback to service price if not in serviceQuantities
       const service = services.find(s => s.id === serviceId)
@@ -199,7 +225,7 @@ export async function POST(request: NextRequest) {
       const tentServiceInTotal = validServiceIds.includes(tentService.id)
       if (tentServiceInTotal) {
         // Replace tent service amount with custom amount
-        const existingTentAmount = body.serviceQuantities?.[tentService.id]?.price || tentService.price
+        const existingTentAmount = serviceQuantities?.[tentService.id]?.price || tentService.price
         totalAmount = totalAmount - existingTentAmount + tentServiceAmount
       } else {
         totalAmount += tentServiceAmount
@@ -236,7 +262,7 @@ export async function POST(request: NextRequest) {
         eventServices: validServiceIds.length > 0 ? {
           create: validServiceIds.map((serviceId: string) => {
             const service = services.find(s => s.id === serviceId)
-            let serviceData = body.serviceQuantities?.[serviceId] || { quantity: 1, price: service?.price || 0 }
+            let serviceData = serviceQuantities?.[serviceId] || { quantity: 1, price: service?.price || 0 }
             
             // If this is the tent service and custom amount is provided, use it
             if (tentService && serviceId === tentService.id && tentServiceAmount > 0) {
