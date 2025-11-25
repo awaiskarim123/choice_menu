@@ -38,7 +38,7 @@ export const eventBookingSchema = z.object({
   contactName: z.string().min(2, "Contact name is required"),
   contactPhone: z.string().min(10, "Contact phone is required"),
   contactEmail: z.string().email("Invalid email").optional().or(z.literal("")),
-  serviceIds: z.array(z.string()).min(1, "At least one service must be selected"),
+  serviceIds: z.array(z.string()).optional(), // Service selection is optional
   // Signature and payment fields
   lastPaymentDate: z.string().optional(),
   clientSignature: z.string().optional(),

@@ -89,35 +89,22 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    // Require authentication for event booking
+    const authResult = await verifyAuth(request)
+    if (!authResult) {
+      return NextResponse.json(
+        { error: "Unauthorized. Please log in to book an event." },
+        { status: 401 }
+      )
+    }
+
     const body = await request.json()
     // Skip validation for now - use body directly
     const validatedData = body as any
     
-    // Get customerId from body or use a default guest user
-    // If customerId is not provided, we need to create or find a guest user
-    let customerId = validatedData.customerId
-    if (!customerId) {
-      // Try to find or create a guest user
-      const guestUser = await prisma.user.findFirst({
-        where: { email: "guest@choicemenu.com" }
-      })
-      
-      if (guestUser) {
-        customerId = guestUser.id
-      } else {
-        // Create a guest user if it doesn't exist
-        const newGuestUser = await prisma.user.create({
-          data: {
-            name: "Guest User",
-            email: "guest@choicemenu.com",
-            phone: "0000000000",
-            password: "guest", // This won't be used for authentication
-            role: "CUSTOMER"
-          }
-        })
-        customerId = newGuestUser.id
-      }
-    }
+    // Get customerId from authenticated user or body
+    // Frontend sends customerId, but we use authenticated user's ID for security
+    const customerId = authResult.userId
 
     // Filter out invalid service IDs (placeholders, empty strings, etc.)
     const serviceIdsArray = Array.isArray(validatedData.serviceIds) ? validatedData.serviceIds : []
@@ -170,29 +157,29 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Ensure we have at least one valid service
-    if (validServiceIds.length === 0) {
-      return NextResponse.json(
-        { error: "At least one service must be selected or tent service amount must be provided" },
-        { status: 400 }
-      )
-    }
+    // Service selection is optional - allow events with no services
+    // Frontend handles validation and shows error if no services selected
+    // Backend will create event even without services (matches frontend behavior)
 
     // Get selected services (allow custom pricing, so don't require all to be active)
-    const services = await prisma.service.findMany({
-      where: {
-        id: { in: validServiceIds },
-      },
-    })
+    const services = validServiceIds.length > 0 
+      ? await prisma.service.findMany({
+          where: {
+            id: { in: validServiceIds },
+          },
+        })
+      : []
 
-    // Verify all service IDs exist
-    const foundServiceIds = services.map(s => s.id)
-    const missingServiceIds = validServiceIds.filter((id: string) => !foundServiceIds.includes(id))
-    if (missingServiceIds.length > 0) {
-      return NextResponse.json(
-        { error: `Invalid service IDs: ${missingServiceIds.join(", ")}` },
-        { status: 400 }
-      )
+    // Verify all service IDs exist (only if services were selected)
+    if (validServiceIds.length > 0) {
+      const foundServiceIds = services.map(s => s.id)
+      const missingServiceIds = validServiceIds.filter((id: string) => !foundServiceIds.includes(id))
+      if (missingServiceIds.length > 0) {
+        return NextResponse.json(
+          { error: `Invalid service IDs: ${missingServiceIds.join(", ")}` },
+          { status: 400 }
+        )
+      }
     }
 
     // Calculate total amount from serviceQuantities if provided, otherwise use service prices
@@ -246,7 +233,7 @@ export async function POST(request: NextRequest) {
         // Legacy fields
         eventDate: eventStartDate,
         eventTime: validatedData.eventStartTime,
-        eventServices: {
+        eventServices: validServiceIds.length > 0 ? {
           create: validServiceIds.map((serviceId: string) => {
             const service = services.find(s => s.id === serviceId)
             let serviceData = body.serviceQuantities?.[serviceId] || { quantity: 1, price: service?.price || 0 }
@@ -265,7 +252,7 @@ export async function POST(request: NextRequest) {
               price: serviceData.price || 0,
             }
           }),
-        },
+        } : undefined,
       },
       include: {
         eventServices: {
