@@ -10,10 +10,20 @@ import { useState, useEffect, useRef } from "react"
 import { useAuth } from "@/contexts/auth-context"
 import { Sidebar } from "@/components/sidebar"
 
+type Service = {
+  id: string
+  name: string
+  description: string | null
+  price: number
+}
+
 export default function Home() {
   const { user, logout } = useAuth()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
+  const [services, setServices] = useState<Service[]>([])
+  const [loadingServices, setLoadingServices] = useState(true)
+  const [servicesError, setServicesError] = useState<string | null>(null)
   const menuRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
 
@@ -21,6 +31,60 @@ export default function Home() {
   useEffect(() => {
     setMounted(true)
   }, [])
+
+  // Fetch services
+  useEffect(() => {
+    fetchServices()
+  }, [])
+
+  const fetchServices = async () => {
+    try {
+      setServicesError(null)
+      const response = await fetch("/api/services?isActive=true")
+      
+      if (!response.ok) {
+        // Try to read error details from response
+        let errorMessage = `Failed to fetch services (${response.status})`
+        try {
+          const errorData = await response.json()
+          errorMessage = errorData.error || errorData.message || errorMessage
+        } catch {
+          // If JSON parsing fails, try reading as text
+          try {
+            const errorText = await response.text()
+            errorMessage = errorText || errorMessage
+          } catch {
+            // If text parsing also fails, use default message
+          }
+        }
+        throw new Error(`${errorMessage} (Status: ${response.status})`)
+      }
+      
+      const data = await response.json()
+      const fetchedServices = data.services || []
+      
+      // Sort services: Tent Service first, then others
+      const sortedServices = fetchedServices.sort((a: Service, b: Service) => {
+        const aName = a.name.toLowerCase()
+        const bName = b.name.toLowerCase()
+        
+        // Tent Service always comes first
+        if (aName.includes("tent") && !bName.includes("tent")) return -1
+        if (!aName.includes("tent") && bName.includes("tent")) return 1
+        
+        // If both or neither are tent, maintain original order
+        return 0
+      })
+      
+      setServices(sortedServices)
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "An unknown error occurred while fetching services"
+      console.error("Error fetching services:", error)
+      setServicesError(errorMessage)
+    } finally {
+      setLoadingServices(false)
+    }
+  }
 
   // Handle Escape key to close menu
   useEffect(() => {
@@ -102,9 +166,11 @@ export default function Home() {
             <Link href="/contact">
               <Button variant="ghost" className="text-sm lg:text-base">Contact</Button>
             </Link>
-            <Link href="/book-event">
-              <Button className="text-sm lg:text-base">Book Event</Button>
-            </Link>
+            {mounted && user && (
+              <Link href="/book-event">
+                <Button className="text-sm lg:text-base">Book Event</Button>
+              </Link>
+            )}
             {mounted && user ? (
               <div className="flex items-center gap-2">
                 <Link href="/dashboard">
@@ -162,9 +228,11 @@ export default function Home() {
               <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)} role="menuitem" tabIndex={0}>
                 <Button variant="ghost" className="w-full justify-start">Contact</Button>
               </Link>
-              <Link href="/book-event" onClick={() => setIsMobileMenuOpen(false)} role="menuitem" tabIndex={0}>
-                <Button className="w-full justify-start">Book Event</Button>
-              </Link>
+              {mounted && user && (
+                <Link href="/book-event" onClick={() => setIsMobileMenuOpen(false)} role="menuitem" tabIndex={0}>
+                  <Button className="w-full justify-start">Book Event</Button>
+                </Link>
+              )}
               {mounted && user ? (
                 <>
                   <Link href="/dashboard" onClick={() => setIsMobileMenuOpen(false)} role="menuitem" tabIndex={0}>
@@ -206,9 +274,11 @@ export default function Home() {
           From catering to event planning, we handle every detail of your special event
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center px-4">
-          <Link href="/book-event" className="w-full sm:w-auto">
-            <Button size="lg" className="w-full sm:w-auto">Book Your Event</Button>
-          </Link>
+          {mounted && user && (
+            <Link href="/book-event" className="w-full sm:w-auto">
+              <Button size="lg" className="w-full sm:w-auto">Book Your Event</Button>
+            </Link>
+          )}
           <Link href="/services" className="w-full sm:w-auto">
             <Button size="lg" variant="outline" className="w-full sm:w-auto">View Services</Button>
           </Link>
@@ -218,38 +288,36 @@ export default function Home() {
       {/* Services Preview */}
       <section className="container mx-auto px-4 py-16 max-w-7xl">
         <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-12">Our Services</h2>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Catering</CardTitle>
-              <CardDescription>Delicious food preparation and service</CardDescription>
-            </CardHeader>
+        {loadingServices ? (
+          <div className="text-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Loading services...</p>
+          </div>
+        ) : servicesError ? (
+          <Card className="border-2 border-destructive/50 max-w-md mx-auto">
+            <CardContent className="py-12 text-center">
+              <p className="text-destructive text-lg font-semibold mb-2">Error loading services</p>
+              <p className="text-muted-foreground text-sm">{servicesError}</p>
+            </CardContent>
           </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Sound System</CardTitle>
-              <CardDescription>High-quality audio equipment and setup</CardDescription>
-            </CardHeader>
+        ) : services.length === 0 ? (
+          <Card className="border-2 max-w-md mx-auto">
+            <CardContent className="py-12 text-center">
+              <p className="text-muted-foreground text-lg">No services available at the moment.</p>
+            </CardContent>
           </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Lighting</CardTitle>
-              <CardDescription>Professional lighting solutions</CardDescription>
-            </CardHeader>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Entertainment</CardTitle>
-              <CardDescription>DJ, music, and entertainment services</CardDescription>
-            </CardHeader>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Event Planning</CardTitle>
-              <CardDescription>Complete event coordination and management</CardDescription>
-            </CardHeader>
-          </Card>
-        </div>
+        ) : (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            {services.map((service) => (
+              <Card key={service.id} className="border-2 hover:border-primary/50 transition-all shadow-sm hover:shadow-md">
+                <CardHeader>
+                  <CardTitle>{service.name}</CardTitle>
+                  <CardDescription>{service.description || "Premium service"}</CardDescription>
+                </CardHeader>
+              </Card>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Contact Section */}
@@ -352,9 +420,11 @@ export default function Home() {
         <div className="container mx-auto px-4 text-center max-w-7xl">
           <h2 className="text-2xl sm:text-3xl font-bold mb-4">Ready to Plan Your Event?</h2>
           <p className="text-lg sm:text-xl mb-6 sm:mb-8">Let us make your special day unforgettable</p>
-          <Link href="/book-event">
-            <Button size="lg" variant="secondary">Get Started</Button>
-          </Link>
+          {mounted && user && (
+            <Link href="/book-event">
+              <Button size="lg" variant="secondary">Get Started</Button>
+            </Link>
+          )}
         </div>
       </section>
 
