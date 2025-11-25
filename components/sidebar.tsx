@@ -156,15 +156,15 @@ export function Sidebar({ className }: SidebarProps) {
             <div className="flex items-center gap-2">
               <ThemeToggle />
               {mounted && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={logout}
-                  className="flex-1 border-destructive/20 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/40"
-                >
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Logout
-                </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={logout}
+                className="flex-1 border-destructive/20 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/40"
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                Logout
+              </Button>
               )}
             </div>
           </div>

@@ -38,7 +38,7 @@ export default function ServicesPage() {
     <div className="min-h-screen bg-background">
       <Sidebar />
       <div className="lg:pl-64 pt-16 lg:pt-0">
-        <div className="container mx-auto px-4 py-16">
+      <div className="container mx-auto px-4 py-16">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold mb-4">Our Services</h1>
           <p className="text-center text-muted-foreground max-w-2xl mx-auto">
@@ -85,7 +85,7 @@ export default function ServicesPage() {
           </Link>
         </div>
       </div>
-      </div>
+        </div>
     </div>
   )
 }

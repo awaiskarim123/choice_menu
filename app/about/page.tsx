@@ -8,7 +8,7 @@ export default function AboutPage() {
     <div className="min-h-screen">
       <Sidebar />
       <div className="lg:pl-64 pt-16 lg:pt-0">
-        <div className="container mx-auto px-4 py-16">
+      <div className="container mx-auto px-4 py-16">
         <div className="max-w-3xl mx-auto">
           <h1 className="text-4xl font-bold mb-6">About Choice Menu</h1>
           <div className="prose prose-lg max-w-none space-y-6">
@@ -79,7 +79,7 @@ export default function AboutPage() {
           </div>
         </div>
       </div>
-      </div>
+        </div>
     </div>
   )
 }
