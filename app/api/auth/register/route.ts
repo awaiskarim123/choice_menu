@@ -36,6 +36,9 @@ export async function POST(request: NextRequest) {
     // Hash password
     const hashedPassword = await hashPassword(validatedData.password)
 
+    // CNIC is already validated by registerSchema to be in format XXXXX-XXXXXXX-X (13 digits)
+    // Store it as-is for display consistency
+
     // Create user - always use CUSTOMER for public registration
     const user = await prisma.user.create({
       data: {

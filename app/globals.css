@@ -59,5 +59,11 @@
   body {
     @apply bg-background text-foreground overflow-x-hidden;
   }
+  button, a, [role="button"], [role="menuitem"] {
+    @apply cursor-pointer;
+  }
+  button:disabled, [aria-disabled="true"] {
+    @apply cursor-not-allowed;
+  }
 }
 

@@ -23,6 +23,28 @@ export default function RegisterPage() {
     role: "CUSTOMER" as Role,
   })
 
+  const formatCNIC = (value: string) => {
+    // Remove all non-digit characters
+    const digits = value.replace(/\D/g, "")
+    
+    // Limit to 13 digits
+    const limited = digits.slice(0, 13)
+    
+    // Format as XXXXX-XXXXXXX-X
+    if (limited.length <= 5) {
+      return limited
+    } else if (limited.length <= 12) {
+      return `${limited.slice(0, 5)}-${limited.slice(5)}`
+    } else {
+      return `${limited.slice(0, 5)}-${limited.slice(5, 12)}-${limited.slice(12)}`
+    }
+  }
+
+  const handleCNICChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatCNIC(e.target.value)
+    setFormData({ ...formData, cnic: formatted })
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
@@ -57,13 +79,13 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle>Register</CardTitle>
-          <CardDescription>Create a new account to book events</CardDescription>
-        </CardHeader>
-        <CardContent>
+    <div className="min-h-screen bg-background flex items-center justify-center px-4 py-8">
+      <Card className="w-full max-w-md border-2 shadow-lg">
+            <CardHeader>
+              <CardTitle>Register</CardTitle>
+              <CardDescription>Create a new account to book events</CardDescription>
+            </CardHeader>
+            <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="name">Full Name</Label>
@@ -102,10 +124,14 @@ export default function RegisterPage() {
               <Input
                 id="cnic"
                 type="text"
-                placeholder="12345-1234567-1"
+                placeholder="71544-3333345-4"
                 value={formData.cnic}
-                onChange={(e) => setFormData({ ...formData, cnic: e.target.value })}
+                onChange={handleCNICChange}
+                maxLength={15}
               />
+              <p className="text-xs text-muted-foreground">
+                Format: XXXXX-XXXXXXX-X (13 digits)
+              </p>
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
