@@ -83,6 +83,15 @@ describe('calculateCancellationRefund', () => {
     expect(refund).toBe(100000)
   })
 
+  it('should return full refund if cancelled exactly 7 days before event', () => {
+    const totalAmount = 100000
+    const cancellationDate = new Date('2024-12-18')
+    const eventDate = new Date('2024-12-25')
+    
+    const refund = calculateCancellationRefund(totalAmount, cancellationDate, eventDate)
+    expect(refund).toBe(100000)
+  })
+
   it('should return 80% refund if cancelled less than 7 days before event', () => {
     const totalAmount = 100000
     const cancellationDate = new Date('2024-12-20')
