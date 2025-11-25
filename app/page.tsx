@@ -23,6 +23,7 @@ export default function Home() {
   const [mounted, setMounted] = useState(false)
   const [services, setServices] = useState<Service[]>([])
   const [loadingServices, setLoadingServices] = useState(true)
+  const [servicesError, setServicesError] = useState<string | null>(null)
   const menuRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
 
@@ -38,7 +39,27 @@ export default function Home() {
 
   const fetchServices = async () => {
     try {
+      setServicesError(null)
       const response = await fetch("/api/services?isActive=true")
+      
+      if (!response.ok) {
+        // Try to read error details from response
+        let errorMessage = `Failed to fetch services (${response.status})`
+        try {
+          const errorData = await response.json()
+          errorMessage = errorData.error || errorData.message || errorMessage
+        } catch {
+          // If JSON parsing fails, try reading as text
+          try {
+            const errorText = await response.text()
+            errorMessage = errorText || errorMessage
+          } catch {
+            // If text parsing also fails, use default message
+          }
+        }
+        throw new Error(`${errorMessage} (Status: ${response.status})`)
+      }
+      
       const data = await response.json()
       const fetchedServices = data.services || []
       
@@ -57,7 +78,9 @@ export default function Home() {
       
       setServices(sortedServices)
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "An unknown error occurred while fetching services"
       console.error("Error fetching services:", error)
+      setServicesError(errorMessage)
     } finally {
       setLoadingServices(false)
     }
@@ -264,6 +287,13 @@ export default function Home() {
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
             <p className="text-muted-foreground">Loading services...</p>
           </div>
+        ) : servicesError ? (
+          <Card className="border-2 border-destructive/50 max-w-md mx-auto">
+            <CardContent className="py-12 text-center">
+              <p className="text-destructive text-lg font-semibold mb-2">Error loading services</p>
+              <p className="text-muted-foreground text-sm">{servicesError}</p>
+            </CardContent>
+          </Card>
         ) : services.length === 0 ? (
           <Card className="border-2 max-w-md mx-auto">
             <CardContent className="py-12 text-center">
