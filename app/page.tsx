@@ -256,33 +256,6 @@ export default function Home() {
       <section className="container mx-auto px-4 py-16 max-w-7xl">
         <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-12">Contact Us</h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {/* Ali Ahmed Jan - Executive Chef */}
-          <Card className="border-2 hover:border-primary/50 transition-all shadow-sm hover:shadow-md">
-            <CardHeader>
-              <CardTitle className="text-lg sm:text-xl">Ali Ahmed Jan</CardTitle>
-              <CardDescription className="text-sm sm:text-base">Executive Chef</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex items-center gap-3">
-                <Phone className="h-5 w-5 text-primary flex-shrink-0" />
-                <a href="tel:03555833735" className="text-sm sm:text-base hover:text-primary transition-colors break-all">
-                  0355-5833735
-                </a>
-              </div>
-              <div className="flex items-center gap-3">
-                <MessageCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
-                <a 
-                  href="https://wa.me/923126967522" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-sm sm:text-base hover:text-green-600 transition-colors break-all"
-                >
-                  0312-6967522
-                </a>
-              </div>
-            </CardContent>
-          </Card>
-
           {/* Sher Baz Khan - General Manager */}
           <Card className="border-2 hover:border-primary/50 transition-all shadow-sm hover:shadow-md">
             <CardHeader>
@@ -305,6 +278,33 @@ export default function Home() {
                   className="text-sm sm:text-base hover:text-green-600 transition-colors break-all"
                 >
                   0317-5559090
+                </a>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Ali Ahmed Jan - Executive Chef */}
+          <Card className="border-2 hover:border-primary/50 transition-all shadow-sm hover:shadow-md">
+            <CardHeader>
+              <CardTitle className="text-lg sm:text-xl">Ali Ahmed Jan</CardTitle>
+              <CardDescription className="text-sm sm:text-base">Executive Chef</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="flex items-center gap-3">
+                <Phone className="h-5 w-5 text-primary flex-shrink-0" />
+                <a href="tel:03555833735" className="text-sm sm:text-base hover:text-primary transition-colors break-all">
+                  0355-5833735
+                </a>
+              </div>
+              <div className="flex items-center gap-3">
+                <MessageCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
+                <a 
+                  href="https://wa.me/923126967522" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-sm sm:text-base hover:text-green-600 transition-colors break-all"
+                >
+                  0312-6967522
                 </a>
               </div>
             </CardContent>

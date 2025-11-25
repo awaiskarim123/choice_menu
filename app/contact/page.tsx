@@ -38,7 +38,7 @@ export default function ContactPage() {
     <div className="min-h-screen">
       <Sidebar />
       <div className="lg:pl-64 pt-16 lg:pt-0">
-        <div className="container mx-auto px-4 py-16">
+      <div className="container mx-auto px-4 py-16">
         <div className="max-w-2xl mx-auto">
           <h1 className="text-4xl font-bold mb-6 text-center">Contact Us</h1>
           <p className="text-center text-muted-foreground mb-12">
@@ -119,7 +119,7 @@ export default function ContactPage() {
           </div>
         </div>
       </div>
-      </div>
+        </div>
     </div>
   )
 }

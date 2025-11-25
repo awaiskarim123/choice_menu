@@ -129,6 +129,14 @@ export default function BookEventPage() {
     }
   }, [selectedServices, tentServiceAmount, services, setValue])
 
+  // Mark step 3 as complete when at least one service is selected
+  useEffect(() => {
+    const serviceIds = Object.keys(selectedServices).filter(id => id !== "placeholder" && id !== "")
+    if (serviceIds.length > 0 && !completedSteps.includes(3)) {
+      setCompletedSteps([...completedSteps, 3])
+    }
+  }, [selectedServices, completedSteps])
+
   const fetchServices = async () => {
     try {
       const response = await fetch("/api/services?isActive=true")
@@ -163,16 +171,13 @@ export default function BookEventPage() {
     if (!stepConfig) return true
 
     if (step === 3) {
-      // Special validation for service selection
+      // Service selection is optional - allow proceeding with or without services
       const serviceIds = Object.keys(selectedServices).filter(id => id !== "placeholder" && id !== "")
-      if (serviceIds.length === 0 && tentServiceAmount === 0) {
-        toast({
-          title: "Error",
-          description: "Please select at least one service or enter tent service amount",
-          variant: "destructive",
-        })
-        return false
+      // Mark as complete if at least one service is selected
+      if (serviceIds.length > 0 && !completedSteps.includes(step)) {
+        setCompletedSteps([...completedSteps, step])
       }
+      // Always return true - service selection is optional
       return true
     }
 
@@ -522,22 +527,6 @@ export default function BookEventPage() {
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Services Selection</h3>
             
-            <div className="space-y-2 p-4 bg-muted/50 rounded-lg border border-border">
-              <Label htmlFor="tentServiceAmount">Tent Service: PKR</Label>
-              <Input
-                id="tentServiceAmount"
-                type="number"
-                min="0"
-                value={tentServiceAmount}
-                onChange={(e) => setTentServiceAmount(parseFloat(e.target.value) || 0)}
-                placeholder="Enter amount"
-                className="cursor-pointer border-2"
-              />
-              <p className="text-sm text-muted-foreground">
-                (Includes tent structure with sidewalls, basic flooring, setup)
-              </p>
-            </div>
-
             <div className="grid md:grid-cols-3 gap-4">
               {services.map((service) => (
                 <div key={service.id} className="flex items-center space-x-2 p-3 rounded-lg border border-border hover:bg-muted/50 transition-colors">
