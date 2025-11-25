@@ -10,10 +10,19 @@ import { useState, useEffect, useRef } from "react"
 import { useAuth } from "@/contexts/auth-context"
 import { Sidebar } from "@/components/sidebar"
 
+type Service = {
+  id: string
+  name: string
+  description: string | null
+  price: number
+}
+
 export default function Home() {
   const { user, logout } = useAuth()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
+  const [services, setServices] = useState<Service[]>([])
+  const [loadingServices, setLoadingServices] = useState(true)
   const menuRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
 
@@ -21,6 +30,38 @@ export default function Home() {
   useEffect(() => {
     setMounted(true)
   }, [])
+
+  // Fetch services
+  useEffect(() => {
+    fetchServices()
+  }, [])
+
+  const fetchServices = async () => {
+    try {
+      const response = await fetch("/api/services?isActive=true")
+      const data = await response.json()
+      const fetchedServices = data.services || []
+      
+      // Sort services: Tent Service first, then others
+      const sortedServices = fetchedServices.sort((a: Service, b: Service) => {
+        const aName = a.name.toLowerCase()
+        const bName = b.name.toLowerCase()
+        
+        // Tent Service always comes first
+        if (aName.includes("tent") && !bName.includes("tent")) return -1
+        if (!aName.includes("tent") && bName.includes("tent")) return 1
+        
+        // If both or neither are tent, maintain original order
+        return 0
+      })
+      
+      setServices(sortedServices)
+    } catch (error) {
+      console.error("Error fetching services:", error)
+    } finally {
+      setLoadingServices(false)
+    }
+  }
 
   // Handle Escape key to close menu
   useEffect(() => {
@@ -218,38 +259,29 @@ export default function Home() {
       {/* Services Preview */}
       <section className="container mx-auto px-4 py-16 max-w-7xl">
         <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-12">Our Services</h2>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Catering</CardTitle>
-              <CardDescription>Delicious food preparation and service</CardDescription>
-            </CardHeader>
+        {loadingServices ? (
+          <div className="text-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Loading services...</p>
+          </div>
+        ) : services.length === 0 ? (
+          <Card className="border-2 max-w-md mx-auto">
+            <CardContent className="py-12 text-center">
+              <p className="text-muted-foreground text-lg">No services available at the moment.</p>
+            </CardContent>
           </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Sound System</CardTitle>
-              <CardDescription>High-quality audio equipment and setup</CardDescription>
-            </CardHeader>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Lighting</CardTitle>
-              <CardDescription>Professional lighting solutions</CardDescription>
-            </CardHeader>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Entertainment</CardTitle>
-              <CardDescription>DJ, music, and entertainment services</CardDescription>
-            </CardHeader>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Event Planning</CardTitle>
-              <CardDescription>Complete event coordination and management</CardDescription>
-            </CardHeader>
-          </Card>
-        </div>
+        ) : (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            {services.map((service) => (
+              <Card key={service.id} className="border-2 hover:border-primary/50 transition-all shadow-sm hover:shadow-md">
+                <CardHeader>
+                  <CardTitle>{service.name}</CardTitle>
+                  <CardDescription>{service.description || "Premium service"}</CardDescription>
+                </CardHeader>
+              </Card>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Contact Section */}
