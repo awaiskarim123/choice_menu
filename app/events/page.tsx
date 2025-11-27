@@ -66,14 +66,20 @@ export default function EventsPage() {
   const [loading, setLoading] = useState(true)
   const [statusFilter, setStatusFilter] = useState("")
   const [openMenuId, setOpenMenuId] = useState<string | null>(null)
+  const [mounted, setMounted] = useState(false)
   const { toast } = useToast()
 
-  // Redirect to login if not authenticated
+  // Mark component as mounted to prevent hydration mismatches
   useEffect(() => {
-    if (!authLoading && !user) {
+    setMounted(true)
+  }, [])
+
+  // Redirect to login if not authenticated (only after mount to prevent hydration issues)
+  useEffect(() => {
+    if (mounted && !authLoading && !user) {
       router.push("/auth/login")
     }
-  }, [user, authLoading, router])
+  }, [mounted, user, authLoading, router])
 
   const fetchEvents = useCallback(async () => {
     if (!token || !user) {
@@ -119,10 +125,27 @@ export default function EventsPage() {
   }, [statusFilter, token, user, router, toast])
 
   useEffect(() => {
-    if (user && token) {
+    if (mounted && user && token) {
       fetchEvents()
     }
-  }, [fetchEvents, user, token])
+  }, [mounted, fetchEvents, user, token])
+
+  // Show loading state during initial hydration or auth check
+  if (!mounted || authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Return null if not authenticated (redirect is in progress)
+  if (!user) {
+    return null
+  }
 
   const getStatusInfo = (status: string) => {
     switch (status) {
@@ -238,8 +261,8 @@ export default function EventsPage() {
     }
   }
 
-  // Show loading while checking authentication
-  if (authLoading || loading) {
+  // Show loading state during initial hydration, auth check, or data loading
+  if (!mounted || authLoading || loading) {
     return (
       <div className="min-h-screen bg-background">
         <Sidebar />
@@ -255,7 +278,7 @@ export default function EventsPage() {
     )
   }
 
-  // Don't render if not authenticated (will redirect)
+  // Return null if not authenticated (redirect is in progress)
   if (!user || !token) {
     return null
   }

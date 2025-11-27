@@ -87,11 +87,19 @@ export default function BookEventPage() {
 
   const foodIncluded = watch("foodIncluded")
 
+  const [mounted, setMounted] = useState(false)
+
+  // Mark component as mounted to prevent hydration mismatches
   useEffect(() => {
-    if (!loading && !user) {
+    setMounted(true)
+  }, [])
+
+  // Redirect to login if not authenticated (only after mount to prevent hydration issues)
+  useEffect(() => {
+    if (mounted && !loading && !user) {
       router.push("/auth/login?redirect=/book-event")
     }
-  }, [loading, user, router])
+  }, [mounted, loading, user, router])
 
   useEffect(() => {
     fetchServices()
@@ -300,7 +308,8 @@ export default function BookEventPage() {
     }
   }
 
-  if (loading) {
+  // Show loading state during initial hydration or auth check
+  if (!mounted || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
@@ -311,6 +320,7 @@ export default function BookEventPage() {
     )
   }
 
+  // Return null if not authenticated (redirect is in progress)
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
