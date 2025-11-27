@@ -416,15 +416,51 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="bg-primary text-primary-foreground py-12 md:py-16">
-        <div className="container mx-auto px-4 text-center max-w-7xl">
-          <h2 className="text-2xl sm:text-3xl font-bold mb-4">Ready to Plan Your Event?</h2>
-          <p className="text-lg sm:text-xl mb-6 sm:mb-8">Let us make your special day unforgettable</p>
-          {mounted && user && (
-            <Link href="/book-event">
-              <Button size="lg" variant="secondary">Get Started</Button>
-            </Link>
-          )}
+      <section className="relative py-16 sm:py-20 md:py-24 lg:py-28 px-4 overflow-hidden">
+        {/* Background decorative elements */}
+        <div className="absolute inset-0 bg-gradient-to-b from-background via-primary/5 to-background"></div>
+        
+        <div className="container mx-auto max-w-5xl relative z-10">
+          <Card className="border-2 border-primary/30 shadow-2xl overflow-hidden bg-gradient-to-br from-primary via-primary to-primary/90 backdrop-blur-sm">
+            <CardContent className="p-8 sm:p-12 md:p-16 lg:p-20 text-center relative">
+              {/* Subtle pattern overlay */}
+              <div className="absolute inset-0 opacity-10">
+                <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[length:50px_50px]"></div>
+              </div>
+              
+              <div className="relative z-10">
+                <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground mb-4 sm:mb-6 leading-tight drop-shadow-sm">
+                  Ready to Plan Your Event?
+                </h2>
+                <p className="text-lg sm:text-xl md:text-2xl text-primary-foreground/95 mb-8 sm:mb-10 md:mb-12 max-w-2xl mx-auto leading-relaxed">
+                  Let us make your special day unforgettable
+                </p>
+                <div className="flex justify-center">
+                  {mounted && user ? (
+                    <Link href="/book-event" className="inline-block">
+                      <Button 
+                        size="lg" 
+                        variant="secondary"
+                        className="px-8 sm:px-10 py-6 sm:py-7 text-lg sm:text-xl font-bold shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 active:scale-95 min-w-[200px] hover:bg-secondary/90"
+                      >
+                        Get Started
+                      </Button>
+                    </Link>
+                  ) : (
+                    <Link href="/auth/login" className="inline-block">
+                      <Button 
+                        size="lg" 
+                        variant="secondary"
+                        className="px-8 sm:px-10 py-6 sm:py-7 text-lg sm:text-xl font-bold shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 active:scale-95 min-w-[200px] hover:bg-secondary/90"
+                      >
+                        Get Started
+                      </Button>
+                    </Link>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </section>
 
