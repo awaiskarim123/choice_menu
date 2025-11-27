@@ -56,9 +56,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const initialState = getInitialAuthState()
   const [user, setUser] = useState<User | null>(initialState.user)
   const [token, setToken] = useState<string | null>(initialState.token)
-  const [loading, setLoading] = useState(false) // Start as false since we initialize synchronously
+  // Start with true to prevent hydration mismatches, then set to false after mount
+  const [loading, setLoading] = useState(true)
+  const [mounted, setMounted] = useState(false)
   const router = useRouter()
   const pathname = usePathname()
+
+  // Mark as mounted and set loading to false after initial hydration
+  useEffect(() => {
+    setMounted(true)
+    setLoading(false)
+  }, [])
 
   // Load auth state from localStorage
   const loadAuthState = useCallback(() => {
@@ -179,7 +187,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [router])
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, token, login, logout, loading: loading || !mounted }}>
       {children}
     </AuthContext.Provider>
   )

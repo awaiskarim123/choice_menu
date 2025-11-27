@@ -416,16 +416,38 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="bg-primary text-primary-foreground py-12 md:py-16">
-        <div className="container mx-auto px-4 text-center max-w-7xl">
-          <h2 className="text-2xl sm:text-3xl font-bold mb-4">Ready to Plan Your Event?</h2>
-          <p className="text-lg sm:text-xl mb-6 sm:mb-8">Let us make your special day unforgettable</p>
-          {mounted && user && (
-            <Link href="/book-event">
-              <Button size="lg" variant="secondary">Get Started</Button>
-            </Link>
-          )}
-        </div>
+      <section className="container mx-auto px-4 py-16 max-w-7xl">
+        <Card className="border-2 hover:border-primary/50 transition-all shadow-sm hover:shadow-md">
+          <CardContent className="p-8 sm:p-12 md:p-16 lg:p-20 text-center">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 leading-tight">
+              Ready to Plan Your Event?
+            </h2>
+            <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground mb-8 sm:mb-10 md:mb-12 max-w-2xl mx-auto leading-relaxed">
+              Let us make your special day unforgettable
+            </p>
+            <div className="flex justify-center">
+              {mounted && user ? (
+                <Link href="/book-event" className="inline-block">
+                  <Button 
+                    size="lg" 
+                    className="px-8 sm:px-10 py-6 sm:py-7 text-lg sm:text-xl font-bold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95 min-w-[200px]"
+                  >
+                    Get Started
+                  </Button>
+                </Link>
+              ) : (
+                <Link href="/auth/login" className="inline-block">
+                  <Button 
+                    size="lg" 
+                    className="px-8 sm:px-10 py-6 sm:py-7 text-lg sm:text-xl font-bold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95 min-w-[200px]"
+                  >
+                    Get Started
+                  </Button>
+                </Link>
+              )}
+            </div>
+          </CardContent>
+        </Card>
       </section>
 
       {/* Footer */}
