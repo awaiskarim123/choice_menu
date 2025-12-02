@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { cn } from "@/lib/utils"
 import { useState } from "react"
 
@@ -19,18 +20,31 @@ export function Logo({ className, href = "/", size = "md", showText = false }: L
   }
 
   const [imageError, setImageError] = useState(false)
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  
+  // Try different image formats
+  const imageSources = ["/logo.png", "/logo.jpg", "/logo.jpeg", "/logo.svg", "/logo.webp"]
+
+  const handleImageError = () => {
+    if (currentImageIndex < imageSources.length - 1) {
+      setCurrentImageIndex(currentImageIndex + 1)
+    } else {
+      setImageError(true)
+    }
+  }
 
   const LogoContent = () => (
     <div className={cn("relative flex items-center gap-3", className)}>
       {!imageError ? (
+        // eslint-disable-next-line @next/next/no-img-element
         <img
-          src="/logo.png"
+          src={imageSources[currentImageIndex]}
           alt="Choice Menu Logo"
           className={cn(sizeClasses[size], "flex-shrink-0 object-contain")}
-          onError={() => setImageError(true)}
+          onError={handleImageError}
         />
       ) : (
-        // Fallback SVG logo matching the design exactly
+        // Fallback SVG logo - exact match to image
         <svg
           width={size === "sm" ? 48 : size === "md" ? 64 : 96}
           height={size === "sm" ? 48 : size === "md" ? 64 : 96}
@@ -39,58 +53,63 @@ export function Logo({ className, href = "/", size = "md", showText = false }: L
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
-          {/* Blue circular background */}
+          {/* Solid blue circular background */}
           <circle cx="32" cy="32" r="30" fill="hsl(221.2 83.2% 53.3%)" />
           
-          {/* White outline border */}
+          {/* Thick white circular border */}
           <circle cx="32" cy="32" r="30" stroke="white" strokeWidth="2.5" />
           
-          {/* CHOICE MENU Text - stacked, positioned in upper half */}
+          {/* CHOICE text - upper half, centered */}
           <text
             x="32"
-            y="16"
+            y="15"
             textAnchor="middle"
             fill="white"
-            fontSize="7"
+            fontSize="6.5"
             fontWeight="bold"
-            fontFamily="Arial, Helvetica, sans-serif"
-            letterSpacing="0.8"
+            fontFamily="Arial, sans-serif"
+            letterSpacing="1"
           >
             CHOICE
           </text>
+          
+          {/* MENU text - directly below CHOICE */}
           <text
             x="32"
-            y="24"
+            y="22"
             textAnchor="middle"
             fill="white"
-            fontSize="7"
+            fontSize="6.5"
             fontWeight="bold"
-            fontFamily="Arial, Helvetica, sans-serif"
-            letterSpacing="0.8"
+            fontFamily="Arial, sans-serif"
+            letterSpacing="1"
           >
             MENU
           </text>
           
-          {/* C-shaped arc - starts from top-left, goes around bottom, ends at top-right */}
+          {/* C-shaped arc - starts near top-left of spoon, sweeps down around bottom, ends near top-right of fork */}
           <path
-            d="M 18 28 Q 18 42, 32 46 Q 46 42, 46 28"
+            d="M 20 30 A 12 12 0 0 1 20 42 A 12 12 0 0 1 44 42 A 12 12 0 0 1 44 30"
             stroke="white"
             strokeWidth="2.5"
             fill="none"
             strokeLinecap="round"
           />
           
-          {/* Fork on the left (two vertical lines) */}
-          <g transform="translate(24, 38)">
-            <line x1="0" y1="-6" x2="0" y2="8" stroke="white" strokeWidth="2" strokeLinecap="round" />
-            <line x1="2" y1="-6" x2="2" y2="8" stroke="white" strokeWidth="2" strokeLinecap="round" />
+          {/* Fork on the left - two vertical lines representing fork tines */}
+          <g transform="translate(26, 40)">
+            <line x1="0" y1="-8" x2="0" y2="6" stroke="white" strokeWidth="1.8" strokeLinecap="round" />
+            <line x1="2.5" y1="-8" x2="2.5" y2="6" stroke="white" strokeWidth="1.8" strokeLinecap="round" />
           </g>
           
-          {/* Spoon on the right (oval head with handle) */}
-          <g transform="translate(40, 38)">
-            <ellipse cx="0" cy="-4" rx="2" ry="2.5" fill="white" />
-            <line x1="0" y1="-1.5" x2="0" y2="8" stroke="white" strokeWidth="2" strokeLinecap="round" />
-            <line x1="-1.5" y1="6" x2="1.5" y2="6" stroke="white" strokeWidth="2" strokeLinecap="round" />
+          {/* Spoon on the right - oval head with handle, slightly in front */}
+          <g transform="translate(38, 40)">
+            {/* Spoon oval head */}
+            <ellipse cx="0" cy="-5" rx="2" ry="2.5" fill="white" />
+            {/* Spoon handle */}
+            <line x1="0" y1="-2.5" x2="0" y2="6" stroke="white" strokeWidth="1.8" strokeLinecap="round" />
+            {/* Spoon base */}
+            <line x1="-1.5" y1="4" x2="1.5" y2="4" stroke="white" strokeWidth="1.8" strokeLinecap="round" />
           </g>
         </svg>
       )}
