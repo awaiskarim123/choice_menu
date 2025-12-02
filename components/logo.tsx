@@ -33,17 +33,28 @@ export function Logo({ className, href = "/", size = "md", showText = false }: L
     }
   }
 
-  const LogoContent = () => (
-    <div className={cn("relative flex items-center gap-3", className)}>
-      {!imageError ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={imageSources[currentImageIndex]}
-          alt="Choice Menu Logo"
-          className={cn(sizeClasses[size], "flex-shrink-0 object-contain")}
-          onError={handleImageError}
-        />
-      ) : (
+  const LogoContent = () => {
+    const imageWidth = size === "sm" ? 48 : size === "md" ? 64 : 96
+    const imageHeight = size === "sm" ? 48 : size === "md" ? 64 : 96
+
+    return (
+      <div className={cn("relative flex items-center gap-3", className)}>
+        {!imageError ? (
+          <div 
+            className={cn(sizeClasses[size], "flex-shrink-0 relative")}
+            onError={handleImageError}
+          >
+            <Image
+              src={imageSources[currentImageIndex]}
+              alt="Choice Menu Logo"
+              width={imageWidth}
+              height={imageHeight}
+              className="object-contain"
+              onError={handleImageError}
+              unoptimized
+            />
+          </div>
+        ) : (
         // Fallback SVG logo - exact match to image
         <svg
           width={size === "sm" ? 48 : size === "md" ? 64 : 96}
@@ -113,15 +124,16 @@ export function Logo({ className, href = "/", size = "md", showText = false }: L
             <line x1="-1.5" y1="5" x2="1.5" y2="5" stroke="white" strokeWidth="2" strokeLinecap="round" />
           </g>
         </svg>
-      )}
-      
-      {showText && (
-        <span className="text-xl font-bold text-primary hidden sm:inline-block">
-          Choice Menu
-        </span>
-      )}
-    </div>
-  )
+        )}
+        
+        {showText && (
+          <span className="text-xl font-bold text-primary hidden sm:inline-block">
+            Choice Menu
+          </span>
+        )}
+      </div>
+    )
+  }
 
   if (href) {
     return (
