@@ -30,7 +30,7 @@ export function Logo({ className, href = "/", size = "md", showText = false }: L
           onError={() => setImageError(true)}
         />
       ) : (
-        // Fallback SVG logo matching the design
+        // Fallback SVG logo matching the design exactly
         <svg
           width={size === "sm" ? 48 : size === "md" ? 64 : 96}
           height={size === "sm" ? 48 : size === "md" ? 64 : 96}
@@ -42,71 +42,56 @@ export function Logo({ className, href = "/", size = "md", showText = false }: L
           {/* Blue circular background */}
           <circle cx="32" cy="32" r="30" fill="hsl(221.2 83.2% 53.3%)" />
           
-          {/* White outline */}
+          {/* White outline border */}
           <circle cx="32" cy="32" r="30" stroke="white" strokeWidth="2.5" />
           
-          {/* CHOICE MENU Text - stacked, positioned in upper half of circle */}
+          {/* CHOICE MENU Text - stacked, positioned in upper half */}
           <text
             x="32"
-            y="18"
+            y="16"
             textAnchor="middle"
             fill="white"
-            fontSize="8"
+            fontSize="7"
             fontWeight="bold"
             fontFamily="Arial, Helvetica, sans-serif"
-            letterSpacing="0.5"
-            dominantBaseline="middle"
+            letterSpacing="0.8"
           >
             CHOICE
           </text>
           <text
             x="32"
-            y="26"
+            y="24"
             textAnchor="middle"
             fill="white"
-            fontSize="8"
+            fontSize="7"
             fontWeight="bold"
             fontFamily="Arial, Helvetica, sans-serif"
-            letterSpacing="0.5"
-            dominantBaseline="middle"
+            letterSpacing="0.8"
           >
             MENU
           </text>
           
-          {/* Spoon and Fork Icon - crossed in lower half, spoon on left, fork on right, spoon in front */}
-          <g transform="translate(32, 40)">
-            {/* Spoon (left side, in front) */}
-            <ellipse cx="-3.5" cy="-5" rx="1.5" ry="2" fill="white" />
-            <path
-              d="M -3.5 -3 L -3.5 8 M -5 6 L -2 6"
-              stroke="white"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-            />
-            {/* Fork (right side, behind) */}
-            <path
-              d="M 5 -8 L 5 8 M 3 -8 L 3 8 M 1 -8 L 1 8 M -1 -8 L -1 6"
-              stroke="white"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-            />
+          {/* C-shaped arc - starts from top-left, goes around bottom, ends at top-right */}
+          <path
+            d="M 18 28 Q 18 42, 32 46 Q 46 42, 46 28"
+            stroke="white"
+            strokeWidth="2.5"
+            fill="none"
+            strokeLinecap="round"
+          />
+          
+          {/* Fork on the left (two vertical lines) */}
+          <g transform="translate(24, 38)">
+            <line x1="0" y1="-6" x2="0" y2="8" stroke="white" strokeWidth="2" strokeLinecap="round" />
+            <line x1="2" y1="-6" x2="2" y2="8" stroke="white" strokeWidth="2" strokeLinecap="round" />
           </g>
           
-          {/* C-shaped arc - partially encircling the spoon and fork */}
-          <path
-            d="M 20 36 A 12 12 0 0 1 32 24"
-            stroke="white"
-            strokeWidth="2.5"
-            fill="none"
-            strokeLinecap="round"
-          />
-          <path
-            d="M 32 48 A 12 12 0 0 1 20 36"
-            stroke="white"
-            strokeWidth="2.5"
-            fill="none"
-            strokeLinecap="round"
-          />
+          {/* Spoon on the right (oval head with handle) */}
+          <g transform="translate(40, 38)">
+            <ellipse cx="0" cy="-4" rx="2" ry="2.5" fill="white" />
+            <line x1="0" y1="-1.5" x2="0" y2="8" stroke="white" strokeWidth="2" strokeLinecap="round" />
+            <line x1="-1.5" y1="6" x2="1.5" y2="6" stroke="white" strokeWidth="2" strokeLinecap="round" />
+          </g>
         </svg>
       )}
       
