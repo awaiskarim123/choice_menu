@@ -8,12 +8,16 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { useToast } from "@/components/ui/use-toast"
+import { useAuth } from "@/contexts/auth-context"
+import { Eye, EyeOff } from "lucide-react"
 import type { Role } from "@/lib/validations"
 
 export default function RegisterPage() {
   const router = useRouter()
   const { toast } = useToast()
+  const { login } = useAuth()
   const [loading, setLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -62,11 +66,48 @@ export default function RegisterPage() {
         throw new Error(data.error || "Registration failed")
       }
 
-      toast({
-        title: "Success",
-        description: "Account created successfully. Please login.",
-      })
-      router.push("/auth/login")
+      // Automatically log in the user after successful registration
+      try {
+        // Use email if available, otherwise use phone for login
+        const loginIdentifier = formData.email || formData.phone
+        
+        const loginResponse = await fetch("/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: loginIdentifier,
+            password: formData.password,
+          }),
+        })
+
+        const loginData = await loginResponse.json()
+
+        if (!loginResponse.ok) {
+          // Registration succeeded but auto-login failed - redirect to login page
+          toast({
+            title: "Account created",
+            description: "Account created successfully. Please login.",
+          })
+          router.push("/auth/login")
+          return
+        }
+
+        // Store token and user info
+        login(loginData.token, loginData.user)
+
+        toast({
+          title: "Success",
+          description: "Account created and logged in successfully",
+        })
+        router.push("/dashboard")
+      } catch (loginError) {
+        // Registration succeeded but auto-login failed - redirect to login page
+        toast({
+          title: "Account created",
+          description: "Account created successfully. Please login.",
+        })
+        router.push("/auth/login")
+      }
     } catch (error: any) {
       toast({
         title: "Error",
@@ -135,14 +176,29 @@ export default function RegisterPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                value={formData.password}
-                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                required
-                minLength={6}
-              />
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  value={formData.password}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  required
+                  minLength={6}
+                  className="pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
             </div>
             <div className="space-y-2">
               <Label htmlFor="role">Role</Label>
