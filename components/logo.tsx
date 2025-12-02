@@ -59,16 +59,16 @@ export function Logo({ className, href = "/", size = "md", showText = false }: L
           {/* Thick white circular border */}
           <circle cx="32" cy="32" r="30" stroke="white" strokeWidth="2.5" />
           
-          {/* CHOICE text - upper half, centered */}
+          {/* CHOICE text - upper half, centered, bold white */}
           <text
             x="32"
-            y="15"
+            y="14"
             textAnchor="middle"
             fill="white"
-            fontSize="6.5"
+            fontSize="7"
             fontWeight="bold"
             fontFamily="Arial, sans-serif"
-            letterSpacing="1"
+            letterSpacing="0.8"
           >
             CHOICE
           </text>
@@ -76,40 +76,41 @@ export function Logo({ className, href = "/", size = "md", showText = false }: L
           {/* MENU text - directly below CHOICE */}
           <text
             x="32"
-            y="22"
+            y="21"
             textAnchor="middle"
             fill="white"
-            fontSize="6.5"
+            fontSize="7"
             fontWeight="bold"
             fontFamily="Arial, sans-serif"
-            letterSpacing="1"
+            letterSpacing="0.8"
           >
             MENU
           </text>
           
-          {/* C-shaped arc - starts near top-left of spoon, sweeps down around bottom, ends near top-right of fork */}
+          {/* C-shaped arc - starts from top-left, sweeps down around bottom, ends at top-right */}
+          {/* This creates a C shape that partially encircles the cutlery from the bottom */}
           <path
-            d="M 20 30 A 12 12 0 0 1 20 42 A 12 12 0 0 1 44 42 A 12 12 0 0 1 44 30"
+            d="M 18 28 A 14 14 0 0 1 18 44 A 14 14 0 0 1 46 44 A 14 14 0 0 1 46 28"
             stroke="white"
             strokeWidth="2.5"
             fill="none"
             strokeLinecap="round"
           />
           
-          {/* Fork on the left - two vertical lines representing fork tines */}
-          <g transform="translate(26, 40)">
-            <line x1="0" y1="-8" x2="0" y2="6" stroke="white" strokeWidth="1.8" strokeLinecap="round" />
-            <line x1="2.5" y1="-8" x2="2.5" y2="6" stroke="white" strokeWidth="1.8" strokeLinecap="round" />
+          {/* Fork on the LEFT - two vertical lines (fork tines) */}
+          <g transform="translate(25, 38)">
+            <line x1="0" y1="-7" x2="0" y2="7" stroke="white" strokeWidth="2" strokeLinecap="round" />
+            <line x1="2.5" y1="-7" x2="2.5" y2="7" stroke="white" strokeWidth="2" strokeLinecap="round" />
           </g>
           
-          {/* Spoon on the right - oval head with handle, slightly in front */}
-          <g transform="translate(38, 40)">
+          {/* Spoon on the RIGHT - oval head with handle */}
+          <g transform="translate(39, 38)">
             {/* Spoon oval head */}
-            <ellipse cx="0" cy="-5" rx="2" ry="2.5" fill="white" />
-            {/* Spoon handle */}
-            <line x1="0" y1="-2.5" x2="0" y2="6" stroke="white" strokeWidth="1.8" strokeLinecap="round" />
-            {/* Spoon base */}
-            <line x1="-1.5" y1="4" x2="1.5" y2="4" stroke="white" strokeWidth="1.8" strokeLinecap="round" />
+            <ellipse cx="0" cy="-4" rx="2" ry="2.5" fill="white" />
+            {/* Spoon handle/stem */}
+            <line x1="0" y1="-1.5" x2="0" y2="7" stroke="white" strokeWidth="2" strokeLinecap="round" />
+            {/* Spoon base/end */}
+            <line x1="-1.5" y1="5" x2="1.5" y2="5" stroke="white" strokeWidth="2" strokeLinecap="round" />
           </g>
         </svg>
       )}
