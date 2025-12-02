@@ -31,45 +31,10 @@ export function Logo({ className, href = "/", size = "md", showText = false }: L
         {/* White outline */}
         <circle cx="32" cy="32" r="30" stroke="white" strokeWidth="2.5" />
         
-        {/* Spoon and Fork Icon - crossed in center */}
-        <g transform="translate(32, 24)">
-          {/* Fork (left side) */}
-          <path
-            d="M -5 -8 L -5 8 M -3 -8 L -3 8 M -1 -8 L -1 8 M 1 -8 L 1 6"
-            stroke="white"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-          />
-          {/* Spoon (right side) */}
-          <ellipse cx="3.5" cy="-5" rx="1.5" ry="2" fill="white" />
-          <path
-            d="M 3.5 -3 L 3.5 8 M 2 6 L 5 6"
-            stroke="white"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-          />
-        </g>
-        
-        {/* Incomplete white ring (C shape) - surrounds cutlery icon, doesn't cover text */}
-        <path
-          d="M 20 24 A 12 12 0 0 1 32 12"
-          stroke="white"
-          strokeWidth="2.5"
-          fill="none"
-          strokeLinecap="round"
-        />
-        <path
-          d="M 32 36 A 12 12 0 0 1 20 24"
-          stroke="white"
-          strokeWidth="2.5"
-          fill="none"
-          strokeLinecap="round"
-        />
-        
-        {/* CHOICE MENU Text - stacked, positioned at bottom of circle */}
+        {/* CHOICE MENU Text - stacked, positioned in upper half of circle */}
         <text
           x="32"
-          y="47"
+          y="18"
           textAnchor="middle"
           fill="white"
           fontSize="8"
@@ -82,7 +47,7 @@ export function Logo({ className, href = "/", size = "md", showText = false }: L
         </text>
         <text
           x="32"
-          y="55"
+          y="26"
           textAnchor="middle"
           fill="white"
           fontSize="8"
@@ -93,6 +58,41 @@ export function Logo({ className, href = "/", size = "md", showText = false }: L
         >
           MENU
         </text>
+        
+        {/* Spoon and Fork Icon - crossed in lower half, spoon on left, fork on right, spoon in front */}
+        <g transform="translate(32, 40)">
+          {/* Spoon (left side, in front) */}
+          <ellipse cx="-3.5" cy="-5" rx="1.5" ry="2" fill="white" />
+          <path
+            d="M -3.5 -3 L -3.5 8 M -5 6 L -2 6"
+            stroke="white"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+          />
+          {/* Fork (right side, behind) */}
+          <path
+            d="M 5 -8 L 5 8 M 3 -8 L 3 8 M 1 -8 L 1 8 M -1 -8 L -1 6"
+            stroke="white"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+          />
+        </g>
+        
+        {/* C-shaped arc - partially encircling the spoon and fork */}
+        <path
+          d="M 20 36 A 12 12 0 0 1 32 24"
+          stroke="white"
+          strokeWidth="2.5"
+          fill="none"
+          strokeLinecap="round"
+        />
+        <path
+          d="M 32 48 A 12 12 0 0 1 20 36"
+          stroke="white"
+          strokeWidth="2.5"
+          fill="none"
+          strokeLinecap="round"
+        />
       </svg>
       
       {showText && (
