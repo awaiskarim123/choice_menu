@@ -10,9 +10,10 @@ interface LogoProps {
   href?: string
   size?: "sm" | "md" | "lg"
   showText?: boolean
+  "aria-label"?: string
 }
 
-export function Logo({ className, href = "/", size = "md", showText = false }: LogoProps) {
+export function Logo({ className, href = "/", size = "md", showText = false, "aria-label": ariaLabel = "Choice Menu Logo" }: LogoProps) {
   const sizeClasses = {
     sm: "w-12 h-12",
     md: "w-16 h-16",
@@ -57,12 +58,12 @@ export function Logo({ className, href = "/", size = "md", showText = false }: L
         ) : (
         // Fallback SVG logo - exact match to image
         <svg
-          width={size === "sm" ? 48 : size === "md" ? 64 : 96}
-          height={size === "sm" ? 48 : size === "md" ? 64 : 96}
           viewBox="0 0 64 64"
           className={cn(sizeClasses[size], "flex-shrink-0")}
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
+          role="img"
+          aria-label={ariaLabel}
         >
           {/* Solid blue circular background */}
           <circle cx="32" cy="32" r="30" fill="hsl(221.2 83.2% 53.3%)" />
