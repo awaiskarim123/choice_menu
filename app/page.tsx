@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Logo } from "@/components/logo"
@@ -18,7 +19,8 @@ type Service = {
 }
 
 export default function Home() {
-  const { user, logout } = useAuth()
+  const { user, logout, loading } = useAuth()
+  const router = useRouter()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
   const [services, setServices] = useState<Service[]>([])
@@ -31,6 +33,13 @@ export default function Home() {
   useEffect(() => {
     setMounted(true)
   }, [])
+
+  // Redirect to login page if user is not authenticated (only after mount to prevent hydration issues)
+  useEffect(() => {
+    if (mounted && !loading && !user) {
+      router.push("/auth/login")
+    }
+  }, [mounted, loading, user, router])
 
   // Fetch services
   useEffect(() => {
@@ -118,6 +127,23 @@ export default function Home() {
       document.body.style.overflow = ""
     }
   }, [isMobileMenuOpen])
+
+  // Show loading state during initial hydration or auth check
+  if (!mounted || loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Return null if not authenticated (redirect is in progress)
+  if (!user) {
+    return null
+  }
 
   const organizationSchema = {
     "@context": "https://schema.org",
