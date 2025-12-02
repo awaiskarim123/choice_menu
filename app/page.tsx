@@ -351,7 +351,7 @@ export default function Home() {
         <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-12">Contact Us</h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {/* Sher Baz Khan - General Manager */}
-          <Card className="border-2 hover:border-primary/50 transition-all shadow-sm hover:shadow-md">
+          <Card className="border-2 hover:border-primary/50 transition-all shadow-sm hover:shadow-md cursor-pointer">
             <CardHeader>
               <CardTitle className="text-lg sm:text-xl">Sher Baz Khan</CardTitle>
               <CardDescription className="text-sm sm:text-base">General Manager</CardDescription>
@@ -378,7 +378,7 @@ export default function Home() {
           </Card>
 
           {/* Ali Ahmed Jan - Executive Chef */}
-          <Card className="border-2 hover:border-primary/50 transition-all shadow-sm hover:shadow-md">
+          <Card className="border-2 hover:border-primary/50 transition-all shadow-sm hover:shadow-md cursor-pointer">
             <CardHeader>
               <CardTitle className="text-lg sm:text-xl">Ali Ahmed Jan</CardTitle>
               <CardDescription className="text-sm sm:text-base">Executive Chef</CardDescription>
@@ -405,7 +405,7 @@ export default function Home() {
           </Card>
 
           {/* General Contact Information */}
-          <Card className="border-2 hover:border-primary/50 transition-all shadow-sm hover:shadow-md sm:col-span-2 lg:col-span-1">
+          <Card className="border-2 hover:border-primary/50 transition-all shadow-sm hover:shadow-md sm:col-span-2 lg:col-span-1 cursor-pointer">
             <CardHeader>
               <CardTitle className="text-lg sm:text-xl">General Contact</CardTitle>
             </CardHeader>
