@@ -443,9 +443,9 @@ export default function Home() {
                   >
                     Get Started
                   </Button>
-                </Link>
-              )}
-            </div>
+            </Link>
+          )}
+        </div>
           </CardContent>
         </Card>
       </section>

@@ -24,6 +24,16 @@ export const metadata: Metadata = {
     telephone: false,
   },
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
+  icons: {
+    icon: [
+      { url: "/logo.png", type: "image/png" },
+      { url: "/favicon.ico", sizes: "any" },
+    ],
+    apple: [
+      { url: "/logo.png", type: "image/png" },
+    ],
+    shortcut: "/favicon.ico",
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
@@ -79,10 +89,10 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <ErrorBoundary>
-            <AuthProvider>
-              {children}
-              <Toaster />
-            </AuthProvider>
+          <AuthProvider>
+            {children}
+            <Toaster />
+          </AuthProvider>
           </ErrorBoundary>
         </ThemeProvider>
       </body>
