@@ -10,4 +10,7 @@ __tests__
 *.test.tsx
 *.spec.ts
 *.spec.tsx
+public/uploads
+public/tmp
+.vercel
 
