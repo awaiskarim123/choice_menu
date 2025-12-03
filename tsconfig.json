@@ -24,9 +24,18 @@
   },
   "include": [
     "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx"
+    "app/**/*.ts",
+    "app/**/*.tsx",
+    "components/**/*.ts",
+    "components/**/*.tsx",
+    "lib/**/*.ts",
+    "lib/**/*.tsx",
+    "contexts/**/*.ts",
+    "contexts/**/*.tsx",
+    "types/**/*.ts",
+    "types/**/*.tsx",
+    "middleware.ts"
   ],
-  "exclude": ["node_modules", ".next"]
+  "exclude": ["node_modules", ".next", "dist", "public/uploads", ".vercel"]
 }
 
