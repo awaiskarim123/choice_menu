@@ -7,4 +7,7 @@ __tests__
 *.test.tsx
 *.spec.ts
 *.spec.tsx
+# Keep .gitkeep files
+!.gitkeep
+!**/.gitkeep
 
