@@ -14,6 +14,13 @@ const nextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
   swcMinify: true,
+  // Exclude problematic paths from build
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      config.externals = [...(config.externals || []), 'sharp', 'canvas']
+    }
+    return config
+  },
   // Security headers
   async headers() {
     return [

@@ -1,0 +1,26 @@
+# Note: Vercel uses .gitignore by default
+# This file is for additional exclusions if needed
+# Most exclusions should be in .gitignore
+
+# Testing files (not needed in production)
+__tests__/
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+coverage/
+
+# Build artifacts
+.next/
+out/
+build/
+dist/
+*.tsbuildinfo
+
+# Local development files
+.env*.local
+.DS_Store
+
+# Uploads (user-generated content, not needed in build)
+public/uploads/*
+

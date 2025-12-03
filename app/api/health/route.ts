@@ -5,6 +5,8 @@ import { prisma } from "@/lib/prisma"
  * Health check endpoint for monitoring and load balancers
  * Returns 200 if the application and database are healthy
  */
+export const dynamic = 'force-dynamic' // Prevent static generation during build
+
 export async function GET() {
   try {
     // Check database connection
