@@ -1,5 +1,8 @@
 node_modules
 .next
+dist
+uploads
+logs
 out
 coverage
 __tests__
@@ -7,7 +10,4 @@ __tests__
 *.test.tsx
 *.spec.ts
 *.spec.tsx
-# Keep .gitkeep files
-!.gitkeep
-!**/.gitkeep
 
